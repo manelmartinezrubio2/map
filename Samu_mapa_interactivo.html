@@ -87,12 +87,12 @@ function fitView(){
  state.scale=clamp(Math.min(availableW/(maxX*2),availableH/(maxY*2)),.25,3);
  // El sistema de coordenades de la xarxa té (0,0) al centre: això deixa
  // el cercle blanc de SAMU exactament al centre de la finestra.
- state.tx=innerWidth/2;
- state.ty=innerHeight/2;
+ state.tx=0;
+ state.ty=0;
  applyView();
 }
 function resetView(){fitView()}
-function zoom(f,cx=innerWidth/2,cy=innerHeight/2){const old=state.scale;const next=clamp(old*f,.55,2.35);const ratio=next/old;state.tx=cx-(cx-state.tx)*ratio;state.ty=cy-(cy-state.ty)*ratio;state.scale=next;applyView()}
+function zoom(f,cx=innerWidth/2,cy=innerHeight/2){const old=state.scale;const next=clamp(old*f,.55,2.35);const ratio=next/old;const centerX=innerWidth/2,centerY=innerHeight/2;state.tx=(cx-centerX)*(1-ratio)+state.tx*ratio;state.ty=(cy-centerY)*(1-ratio)+state.ty*ratio;state.scale=next;applyView()}
 function selectPerson(id){state.selected=id;document.body.classList.add('side-open');showSide(id)}
 function closeSide(){state.selected=null;document.body.classList.remove('side-open');}
 function refFor(id){return state.references.find(r=>String(r.ID)===String(id))}
