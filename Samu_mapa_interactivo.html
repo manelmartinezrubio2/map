@@ -4,101 +4,2231 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SAMU SOCIAL MAP</title>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
-:root{--bg:#050505;--panel:#0d0d0d;--ink:#f3f1ea;--muted:#8b8984;--line:rgba(255,255,255,.18);--green:#00b86f;--card:rgba(16,16,16,.92)}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,Helvetica,Arial,sans-serif}button{font:inherit;color:inherit}a{color:inherit;text-decoration:none}
-#app{position:fixed;inset:0;background:radial-gradient(circle at 50% 50%,#101310 0,#080808 35%,#050505 75%)}
-#top{position:absolute;z-index:20;left:28px;right:28px;top:20px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.brand{pointer-events:auto;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}.tag{pointer-events:auto;font-size:13px;color:#d4d1c9;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:9px 14px;background:rgba(0,0,0,.25);backdrop-filter:blur(10px)}
-#stage{position:absolute;inset:0;cursor:grab}#stage.dragging{cursor:grabbing}.scene{position:absolute;left:50%;top:50%;width:1px;height:1px;transform-origin:0 0}.scene-inner{position:absolute;left:-1200px;top:-900px;width:2400px;height:1800px;transform-origin:0 0;overflow:visible}.line{fill:none}.samu-ring{fill:none;stroke:rgba(255,255,255,.07);stroke-width:1}.samu-core{fill:#f5f2ea}.samu-text{fill:#050505;font-weight:800;font-size:14px;letter-spacing:.12em;text-anchor:middle;dominant-baseline:middle}.person-node{cursor:pointer}.person-circle{stroke:rgba(255,255,255,.28);stroke-width:1.5}.person-name{fill:#f3f1ea;font-size:13px;font-weight:550;text-anchor:middle;paint-order:stroke;stroke:#050505;stroke-width:5px;stroke-linejoin:round}.node-glow{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1}.person-node:hover .person-circle{stroke:#fff}.person-node:hover .person-name{fill:#fff}
-#controls{position:absolute;z-index:30;right:24px;bottom:128px;display:flex;flex-direction:column;gap:7px}.ctrl{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(13,13,13,.78);backdrop-filter:blur(10px);display:grid;place-items:center;font-size:18px;cursor:pointer}.ctrl:hover{border-color:rgba(255,255,255,.3)}
-#legend{position:absolute;z-index:20;left:28px;right:28px;bottom:22px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}.legend-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(9,9,9,.66);font-size:11px;color:#c9c7c1}.legend-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
-#stats-link{position:absolute;z-index:30;right:28px;bottom:22px;margin-right:6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#c9c7c1;transform:translateY(-42px)}#stats-link:hover{color:#fff}
-#side{position:absolute;z-index:40;top:0;right:0;bottom:0;width:min(420px,92vw);background:var(--card);border-left:1px solid rgba(255,255,255,.10);backdrop-filter:blur(20px);transform:translateX(101%);transition:transform .45s cubic-bezier(.2,.8,.2,1);padding:28px;overflow:auto}.side-open #side{transform:translateX(0)}.close{position:absolute;top:20px;right:20px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:transparent;cursor:pointer}.side-kicker{margin-top:34px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}.side-title{margin:10px 0 0;font-size:38px;line-height:1.02;font-weight:650;letter-spacing:-.03em}.meta{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.meta b{display:block;color:var(--muted);font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}.meta span{font-size:14px;color:#f0eee7}.section{margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.1)}.section h3{margin:0 0 13px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}.worlds{display:flex;gap:7px;flex-wrap:wrap}.pill{font-size:12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:7px 10px}.connections-list{display:grid;gap:9px}.conn{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.06)}.conn small{color:var(--muted);font-size:11px}.memory{font-size:15px;line-height:1.55;color:#d9d6ce}.empty{color:var(--muted)}
-#error{position:absolute;inset:0;z-index:100;display:none;place-items:center;padding:32px;text-align:center}.error-card{max-width:560px;border:1px solid rgba(255,255,255,.12);background:#0c0c0c;padding:28px}.error-card h2{margin:0 0 8px}.error-card p{color:#aaa;margin:0}
-@media(max-width:700px){#top{left:16px;right:16px;top:14px}.brand{font-size:10px}.tag{font-size:11px;padding:7px 10px}#legend{left:16px;right:16px;bottom:16px}.legend-item{font-size:10px;padding:6px 8px}#stats-link{right:16px;bottom:16px}.side-title{font-size:32px}}
+:root{
+  --bg:#050505;
+  --panel:#0d0d0d;
+  --ink:#f3f1ea;
+  --muted:#8b8984;
+  --line:rgba(255,255,255,.18);
+  --green:#00b86f;
+  --card:rgba(16,16,16,.92);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,Helvetica,Arial,sans-serif;
+}
+
+button{
+  font:inherit;
+  color:inherit;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+#app{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      #101310 0,
+      #080808 35%,
+      #050505 75%
+    );
+}
+
+/* TOP */
+
+#top{
+  position:absolute;
+  z-index:20;
+  left:28px;
+  right:28px;
+  top:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  pointer-events:none;
+}
+
+.brand{
+  pointer-events:auto;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:12px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.brand img{
+  display:block;
+  height:12px;
+  width:auto;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+
+.tag{
+  pointer-events:auto;
+  font-size:13px;
+  color:#d4d1c9;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:999px;
+  padding:9px 14px;
+  background:rgba(0,0,0,.25);
+  backdrop-filter:blur(10px);
+}
+
+/* STAGE */
+
+#stage{
+  position:absolute;
+  inset:0;
+  cursor:grab;
+}
+
+#stage.dragging{
+  cursor:grabbing;
+}
+
+.scene{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:1px;
+  height:1px;
+  transform-origin:0 0;
+}
+
+.scene-inner{
+  position:absolute;
+  left:-1200px;
+  top:-900px;
+  width:2400px;
+  height:1800px;
+  transform-origin:0 0;
+  overflow:visible;
+}
+
+/* SVG */
+
+.line{
+  fill:none;
+}
+
+.samu-ring{
+  fill:none;
+  stroke:rgba(255,255,255,.07);
+  stroke-width:1;
+}
+
+.samu-core{
+  fill:#f5f2ea;
+}
+
+.samu-text{
+  fill:#050505;
+  font-weight:800;
+  font-size:14px;
+  letter-spacing:.12em;
+  text-anchor:middle;
+  dominant-baseline:middle;
+}
+
+.person-node{
+  cursor:pointer;
+}
+
+.person-circle{
+  stroke:rgba(255,255,255,.28);
+  stroke-width:1.5;
+}
+
+.person-name{
+  fill:#f3f1ea;
+  font-size:13px;
+  font-weight:550;
+  text-anchor:middle;
+  paint-order:stroke;
+  stroke:#050505;
+  stroke-width:5px;
+  stroke-linejoin:round;
+}
+
+.node-glow{
+  fill:none;
+  stroke:rgba(255,255,255,.18);
+  stroke-width:1;
+}
+
+.person-node:hover .person-circle{
+  stroke:#fff;
+}
+
+.person-node:hover .person-name{
+  fill:#fff;
+}
+
+/* CONTROLS */
+
+#controls{
+  position:absolute;
+  z-index:30;
+  right:24px;
+  bottom:128px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.ctrl{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(13,13,13,.78);
+  backdrop-filter:blur(10px);
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.ctrl:hover{
+  border-color:rgba(255,255,255,.3);
+}
+
+/* LEGEND */
+
+#legend{
+  position:absolute;
+  z-index:20;
+  left:28px;
+  right:28px;
+  bottom:22px;
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  background:rgba(9,9,9,.66);
+  font-size:11px;
+  color:#c9c7c1;
+}
+
+.legend-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  flex:0 0 auto;
+}
+
+/* STATS LINK */
+
+#stats-link{
+  position:absolute;
+  z-index:30;
+  right:28px;
+  bottom:22px;
+  margin-right:6px;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#c9c7c1;
+  transform:translateY(-42px);
+}
+
+#stats-link:hover{
+  color:#fff;
+}
+
+/* SIDE PANEL */
+
+#side{
+  position:absolute;
+  z-index:40;
+  top:0;
+  right:0;
+  bottom:0;
+  width:min(420px,92vw);
+  background:var(--card);
+  border-left:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(20px);
+  transform:translateX(101%);
+  transition:
+    transform .45s cubic-bezier(.2,.8,.2,1);
+  padding:28px;
+  overflow:auto;
+}
+
+.side-open #side{
+  transform:translateX(0);
+}
+
+.close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.12);
+  background:transparent;
+  cursor:pointer;
+}
+
+.side-kicker{
+  margin-top:34px;
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.side-title{
+  margin:10px 0 0;
+  font-size:38px;
+  line-height:1.02;
+  font-weight:650;
+  letter-spacing:-.03em;
+}
+
+.meta{
+  margin-top:28px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.meta b{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+
+.meta span{
+  font-size:14px;
+  color:#f0eee7;
+}
+
+.section{
+  margin-top:32px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+
+.section h3{
+  margin:0 0 13px;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.worlds{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.pill{
+  font-size:12px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:999px;
+  padding:7px 10px;
+}
+
+.connections-list{
+  display:grid;
+  gap:9px;
+}
+
+.conn{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  padding-bottom:9px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.conn small{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.memory{
+  font-size:15px;
+  line-height:1.55;
+  color:#d9d6ce;
+}
+
+.empty{
+  color:var(--muted);
+}
+
+/* ERROR */
+
+#error{
+  position:absolute;
+  inset:0;
+  z-index:100;
+  display:none;
+  place-items:center;
+  padding:32px;
+  text-align:center;
+}
+
+.error-card{
+  max-width:560px;
+  border:1px solid rgba(255,255,255,.12);
+  background:#0c0c0c;
+  padding:28px;
+}
+
+.error-card h2{
+  margin:0 0 8px;
+}
+
+.error-card p{
+  color:#aaa;
+  margin:0;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+  #top{
+    left:16px;
+    right:16px;
+    top:14px;
+  }
+
+  .brand{
+    font-size:10px;
+  }
+
+  .brand img{
+    height:10px;
+  }
+
+  .tag{
+    font-size:11px;
+    padding:7px 10px;
+  }
+
+  #legend{
+    left:16px;
+    right:16px;
+    bottom:16px;
+  }
+
+  .legend-item{
+    font-size:10px;
+    padding:6px 8px;
+  }
+
+  #stats-link{
+    right:16px;
+    bottom:16px;
+  }
+
+  .side-title{
+    font-size:32px;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <div id="app">
-  <div id="top"><div class="brand">SAMU SOCIAL MAP</div><div class="tag">El nexe de connexió ets tu, Samu</div></div>
-  <div id="stage"><div class="scene"><svg class="scene-inner" id="network" width="2400" height="1800" viewBox="-1200 -900 2400 1800"><g id="links"></g><g id="nodes"></g><g id="samu"></g></svg></div></div>
-  <div id="controls"><button class="ctrl" id="zoomIn">+</button><button class="ctrl" id="zoomOut">−</button><button class="ctrl" id="reset">⌖</button></div>
-  <a id="stats-link" href="Samu_estadistiques.html">ESTADÍSTIQUES ↗</a>
+
+  <!-- HEADER -->
+  <div id="top">
+
+    <div class="brand">
+      <span>SAMU SOCIAL MAP</span>
+      <img src="logo.png" alt="Logo">
+    </div>
+
+    <div class="tag">
+      El nexe de connexió ets tu, Samu
+    </div>
+
+  </div>
+
+  <!-- MAP -->
+  <div id="stage">
+
+    <div class="scene">
+
+      <svg
+        class="scene-inner"
+        id="network"
+        width="2400"
+        height="1800"
+        viewBox="-1200 -900 2400 1800"
+      >
+
+        <g id="links"></g>
+        <g id="nodes"></g>
+        <g id="samu"></g>
+
+      </svg>
+
+    </div>
+
+  </div>
+
+  <!-- CONTROLS -->
+  <div id="controls">
+
+    <button class="ctrl" id="zoomIn">+</button>
+    <button class="ctrl" id="zoomOut">−</button>
+    <button class="ctrl" id="reset">⌖</button>
+
+  </div>
+
+  <!-- STATS -->
+  <a
+    id="stats-link"
+    href="Samu_estadistiques.html"
+  >
+    ESTADÍSTIQUES ↗
+  </a>
+
+  <!-- LEGEND -->
   <div id="legend"></div>
-  <aside id="side"><button class="close" id="closeSide">×</button><div id="sideContent"></div></aside>
-  <div id="error"><div class="error-card"><h2>No s’ha pogut carregar la xarxa</h2><p id="errorText">Comprova que <strong>data.xlsx</strong> sigui a la mateixa carpeta que aquesta pàgina.</p></div></div>
+
+  <!-- SIDE PANEL -->
+  <aside id="side">
+
+    <button
+      class="close"
+      id="closeSide"
+    >
+      ×
+    </button>
+
+    <div id="sideContent"></div>
+
+  </aside>
+
+  <!-- ERROR -->
+  <div id="error">
+
+    <div class="error-card">
+
+      <h2>
+        No s’ha pogut carregar la xarxa
+      </h2>
+
+      <p id="errorText">
+        Comprova que
+        <strong>data.xlsx</strong>
+        sigui a la mateixa carpeta que aquesta pàgina.
+      </p>
+
+    </div>
+
+  </div>
+
 </div>
+
 <script>
-const state={people:[],connections:[],references:[],categories:[],positions:new Map(),colorMap:new Map(),scale:1,tx:0,ty:0,selected:null,dragNode:null,draggingCanvas:false,animStart:performance.now()};
-const els={scene:document.querySelector('.scene'),svg:document.getElementById('network'),links:document.getElementById('links'),nodes:document.getElementById('nodes'),samu:document.getElementById('samu'),legend:document.getElementById('legend'),side:document.getElementById('side'),sideContent:document.getElementById('sideContent'),error:document.getElementById('error'),errorText:document.getElementById('errorText')};
-const NS='http://www.w3.org/2000/svg';
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function norm(v){return v==null?'':String(v).trim()}
-function ca(v){return norm(v)||'No consta'}
-function hue(str){let h=0;for(let i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))%360;return h}
-function colorFor(cat){let h=hue(cat); return `hsl(${h} 72% 60%)`}
-function personLabel(name){const p=norm(name).split(/\s+/).filter(Boolean);return p.length>1?`${p[0]} ${p[1][0].toUpperCase()}.`:p[0]||'No consta'}
-function rowObjects(sheet){return XLSX.utils.sheet_to_json(sheet,{defval:''});}
+
+const state = {
+
+  people: [],
+  connections: [],
+  references: [],
+
+  categories: [],
+  positions: new Map(),
+  colorMap: new Map(),
+
+  scale: 1,
+  tx: 0,
+  ty: 0,
+
+  selected: null,
+
+  dragNode: null,
+  draggingCanvas: false,
+
+  animStart: performance.now()
+
+};
+
+const els = {
+
+  scene: document.querySelector('.scene'),
+
+  svg: document.getElementById('network'),
+
+  links: document.getElementById('links'),
+
+  nodes: document.getElementById('nodes'),
+
+  samu: document.getElementById('samu'),
+
+  legend: document.getElementById('legend'),
+
+  side: document.getElementById('side'),
+
+  sideContent: document.getElementById('sideContent'),
+
+  error: document.getElementById('error'),
+
+  errorText: document.getElementById('errorText')
+
+};
+
+const NS = 'http://www.w3.org/2000/svg';
+
+
+/* -----------------------------
+   HELPERS
+----------------------------- */
+
+const clamp = (v,a,b) =>
+  Math.max(a, Math.min(b,v));
+
+
+function norm(v){
+
+  return v == null
+    ? ''
+    : String(v).trim();
+
+}
+
+
+function ca(v){
+
+  return norm(v) || 'No consta';
+
+}
+
+
+function hue(str){
+
+  let h = 0;
+
+  for(let i=0;i<str.length;i++){
+
+    h =
+      (h * 31 + str.charCodeAt(i))
+      % 360;
+
+  }
+
+  return h;
+
+}
+
+
+function colorFor(cat){
+
+  const h = hue(cat);
+
+  return `hsl(${h} 72% 60%)`;
+
+}
+
+
+function personLabel(name){
+
+  const p =
+    norm(name)
+      .split(/\s+/)
+      .filter(Boolean);
+
+  if(p.length > 1){
+
+    return `${p[0]} ${p[1][0].toUpperCase()}.`;
+
+  }
+
+  return p[0] || 'No consta';
+
+}
+
+
+function rowObjects(sheet){
+
+  return XLSX.utils.sheet_to_json(
+    sheet,
+    {
+      defval:''
+    }
+  );
+
+}
+
+
+function escapeHtml(s){
+
+  return String(s).replace(
+    /[&<>"]/g,
+    m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;'
+    }[m])
+  );
+
+}
+
+
+/* -----------------------------
+   LOAD EXCEL
+----------------------------- */
+
 async function loadWorkbook(){
- const response=await fetch('data.xlsx',{cache:'no-store'}); if(!response.ok)throw new Error(`data.xlsx: HTTP ${response.status}`);
- const buffer=await response.arrayBuffer(); const workbook=XLSX.read(buffer,{type:'array'});
- const required=['PERSONAS','CONEXIONES','REFERENCIAS']; for(const s of required)if(!workbook.SheetNames.includes(s))throw new Error(`Falta la hoja ${s}.`);
- state.people=rowObjects(workbook.Sheets.PERSONAS); state.connections=rowObjects(workbook.Sheets.CONEXIONES); state.references=rowObjects(workbook.Sheets.REFERENCIAS);
- state.categories=[...new Set(state.people.map(p=>ca(p['Tipo'])).filter(Boolean))]; state.categories.forEach(c=>state.colorMap.set(c,colorFor(c)));
+
+  const response =
+    await fetch(
+      'data.xlsx',
+      {
+        cache:'no-store'
+      }
+    );
+
+  if(!response.ok){
+
+    throw new Error(
+      `data.xlsx: HTTP ${response.status}`
+    );
+
+  }
+
+  const buffer =
+    await response.arrayBuffer();
+
+  const workbook =
+    XLSX.read(
+      buffer,
+      {
+        type:'array'
+      }
+    );
+
+  const required = [
+    'PERSONAS',
+    'CONEXIONES',
+    'REFERENCIAS'
+  ];
+
+  for(const s of required){
+
+    if(!workbook.SheetNames.includes(s)){
+
+      throw new Error(
+        `Falta la hoja ${s}.`
+      );
+
+    }
+
+  }
+
+  state.people =
+    rowObjects(
+      workbook.Sheets.PERSONAS
+    );
+
+  state.connections =
+    rowObjects(
+      workbook.Sheets.CONEXIONES
+    );
+
+  state.references =
+    rowObjects(
+      workbook.Sheets.REFERENCIAS
+    );
+
+  state.categories = [
+    ...new Set(
+      state.people
+        .map(p => ca(p['Tipo']))
+        .filter(Boolean)
+    )
+  ];
+
+  state.categories.forEach(
+    c => state.colorMap.set(
+      c,
+      colorFor(c)
+    )
+  );
+
 }
+
+
+/* -----------------------------
+   BUILD MODEL
+----------------------------- */
+
 function buildModel(){
- const n=state.people.length; const byId=new Map(state.people.map(p=>[String(p.ID),p])); const deg=new Map();
- state.connections.forEach(c=>{const a=String(c['ID A']||''),b=String(c['ID B']||''); if(!a||!b)return; if(byId.has(a))deg.set(a,(deg.get(a)||0)+1);if(byId.has(b))deg.set(b,(deg.get(b)||0)+1)});
- const rings=[]; let remaining=n, ring=0; while(remaining>0){const cap=ring===0?8:Math.max(8,Math.floor(2*Math.PI*(260+ring*150)/145));const count=Math.min(remaining,cap);rings.push(count);remaining-=count;ring++}
- let idx=0; rings.forEach((count,r)=>{const radius=270+r*160; for(let j=0;j<count;j++){const p=state.people[idx++];const id=String(p.ID);const angle=(j/count)*Math.PI*2+(r%2?Math.PI/count:0);const degree=deg.get(id)||0;state.positions.set(id,{x:Math.cos(angle)*radius,y:Math.sin(angle)*radius,r:24+Math.min(8,degree*1.6),phase:(idx*1.77)%Math.PI/2})}});
- renderStatic(); renderLegend(); resetView(); requestAnimationFrame(tick);
+
+  const n = state.people.length;
+
+  const byId =
+    new Map(
+      state.people.map(
+        p => [
+          String(p.ID),
+          p
+        ]
+      )
+    );
+
+  const deg = new Map();
+
+  state.connections.forEach(c => {
+
+    const a =
+      String(c['ID A'] || '');
+
+    const b =
+      String(c['ID B'] || '');
+
+    if(!a || !b) return;
+
+    if(byId.has(a)){
+
+      deg.set(
+        a,
+        (deg.get(a) || 0) + 1
+      );
+
+    }
+
+    if(byId.has(b)){
+
+      deg.set(
+        b,
+        (deg.get(b) || 0) + 1
+      );
+
+    }
+
+  });
+
+
+  /* RINGS */
+
+  const rings = [];
+
+  let remaining = n;
+
+  let ring = 0;
+
+  while(remaining > 0){
+
+    const cap =
+      ring === 0
+        ? 8
+        : Math.max(
+            8,
+            Math.floor(
+              2 *
+              Math.PI *
+              (260 + ring * 150)
+              / 145
+            )
+          );
+
+    const count =
+      Math.min(
+        remaining,
+        cap
+      );
+
+    rings.push(count);
+
+    remaining -= count;
+
+    ring++;
+
+  }
+
+
+  let idx = 0;
+
+  rings.forEach(
+    (count,r) => {
+
+      const radius =
+        270 + r * 160;
+
+      for(
+        let j=0;
+        j<count;
+        j++
+      ){
+
+        const p =
+          state.people[idx++];
+
+        const id =
+          String(p.ID);
+
+        const angle =
+          (j / count) *
+          Math.PI *
+          2 +
+          (r % 2
+            ? Math.PI / count
+            : 0);
+
+        const degree =
+          deg.get(id) || 0;
+
+        state.positions.set(
+          id,
+          {
+            x:
+              Math.cos(angle) *
+              radius,
+
+            y:
+              Math.sin(angle) *
+              radius,
+
+            r:
+              24 +
+              Math.min(
+                8,
+                degree * 1.6
+              ),
+
+            phase:
+              (idx * 1.77)
+              % (Math.PI / 2)
+          }
+        );
+
+      }
+
+    }
+  );
+
+
+  renderStatic();
+
+  renderLegend();
+
+  resetView();
+
+  requestAnimationFrame(tick);
+
 }
-function el(tag,attrs={}){const x=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))x.setAttribute(k,v);return x}
+
+
+/* -----------------------------
+   SVG ELEMENT
+----------------------------- */
+
+function el(tag,attrs={}){
+
+  const x =
+    document.createElementNS(
+      NS,
+      tag
+    );
+
+  for(
+    const [k,v]
+    of Object.entries(attrs)
+  ){
+
+    x.setAttribute(k,v);
+
+  }
+
+  return x;
+
+}
+
+
+/* -----------------------------
+   STATIC RENDER
+----------------------------- */
+
 function renderStatic(){
- els.links.innerHTML='';els.nodes.innerHTML='';els.samu.innerHTML='';
- els.samu.append(el('circle',{r:62,class:'samu-ring'}));els.samu.append(el('circle',{r:48,class:'samu-core'}));const st=el('text',{class:'samu-text'});st.textContent='SAMU';els.samu.append(st);
- state.people.forEach(p=>{const id=String(p.ID),pos=state.positions.get(id);const cat=ca(p['Tipo']);const col=state.colorMap.get(cat)||'#aaa';const g=el('g',{class:'person-node','data-id':id});g.append(el('circle',{class:'node-glow',r:pos.r+4}));g.append(el('circle',{class:'person-circle',r:pos.r,fill:col}));const t=el('text',{class:'person-name',y:pos.r+22});t.textContent=personLabel(p['Nombre']);g.append(t);g.addEventListener('pointerdown',e=>{e.stopPropagation();state.dragNode={id,dragging:false,startX:e.clientX,startY:e.clientY,baseX:state.positions.get(id).x,baseY:state.positions.get(id).y};g.setPointerCapture(e.pointerId)});g.addEventListener('pointermove',e=>{const d=state.dragNode;if(!d||d.id!==id)return;const dx=e.clientX-d.startX,dy=e.clientY-d.startY;if(Math.hypot(dx,dy)>4)d.dragging=true;if(d.dragging){const p0=state.positions.get(id);p0.x=d.baseX+dx/state.scale;p0.y=d.baseY+dy/state.scale}});g.addEventListener('pointerup',e=>{const d=state.dragNode;if(!d||d.id!==id)return;state.dragNode=null;if(!d.dragging)selectPerson(id)});g.addEventListener('pointercancel',()=>{state.dragNode=null});els.nodes.append(g)});
- state.connections.forEach((c,i)=>{const a=String(c['ID A']||''),b=String(c['ID B']||'');if(!a||!b)return;const path=el('line',{class:'line person-link',stroke:'#fff','stroke-width':'4.4','stroke-opacity':'.17','data-a':a,'data-b':b,'data-i':i});els.links.append(path)});
- state.people.forEach(p=>{const id=String(p.ID);const cat=ca(p['Tipo']);const line=el('line',{class:'line samu-link','stroke':state.colorMap.get(cat)||'#aaa','stroke-width':'6','stroke-linecap':'round','data-id':id});els.links.append(line)});
+
+  els.links.innerHTML = '';
+
+  els.nodes.innerHTML = '';
+
+  els.samu.innerHTML = '';
+
+
+  /* SAMU */
+
+  els.samu.append(
+    el(
+      'circle',
+      {
+        r:62,
+        class:'samu-ring'
+      }
+    )
+  );
+
+  els.samu.append(
+    el(
+      'circle',
+      {
+        r:48,
+        class:'samu-core'
+      }
+    )
+  );
+
+  const st =
+    el(
+      'text',
+      {
+        class:'samu-text'
+      }
+    );
+
+  st.textContent = 'SAMU';
+
+  els.samu.append(st);
+
+
+  /* PEOPLE */
+
+  state.people.forEach(p => {
+
+    const id =
+      String(p.ID);
+
+    const pos =
+      state.positions.get(id);
+
+    const cat =
+      ca(p['Tipo']);
+
+    const col =
+      state.colorMap.get(cat)
+      || '#aaa';
+
+    const g =
+      el(
+        'g',
+        {
+          class:'person-node',
+          'data-id':id
+        }
+      );
+
+
+    g.append(
+      el(
+        'circle',
+        {
+          class:'node-glow',
+          r:pos.r + 4
+        }
+      )
+    );
+
+
+    g.append(
+      el(
+        'circle',
+        {
+          class:'person-circle',
+          r:pos.r,
+          fill:col
+        }
+      )
+    );
+
+
+    const t =
+      el(
+        'text',
+        {
+          class:'person-name',
+          y:pos.r + 22
+        }
+      );
+
+    t.textContent =
+      personLabel(p['Nombre']);
+
+    g.append(t);
+
+
+    /* POINTER DOWN */
+
+    g.addEventListener(
+      'pointerdown',
+      e => {
+
+        e.stopPropagation();
+
+        state.dragNode = {
+
+          id,
+
+          dragging:false,
+
+          startX:e.clientX,
+
+          startY:e.clientY,
+
+          baseX:
+            state.positions
+              .get(id)
+              .x,
+
+          baseY:
+            state.positions
+              .get(id)
+              .y
+        };
+
+        g.setPointerCapture(
+          e.pointerId
+        );
+
+      }
+    );
+
+
+    /* POINTER MOVE */
+
+    g.addEventListener(
+      'pointermove',
+      e => {
+
+        const d =
+          state.dragNode;
+
+        if(
+          !d ||
+          d.id !== id
+        ){
+          return;
+        }
+
+        const dx =
+          e.clientX -
+          d.startX;
+
+        const dy =
+          e.clientY -
+          d.startY;
+
+        if(
+          Math.hypot(dx,dy) > 4
+        ){
+
+          d.dragging = true;
+
+        }
+
+        if(d.dragging){
+
+          const p0 =
+            state.positions
+              .get(id);
+
+          p0.x =
+            d.baseX +
+            dx /
+            state.scale;
+
+          p0.y =
+            d.baseY +
+            dy /
+            state.scale;
+
+        }
+
+      }
+    );
+
+
+    /* POINTER UP */
+
+    g.addEventListener(
+      'pointerup',
+      e => {
+
+        const d =
+          state.dragNode;
+
+        if(
+          !d ||
+          d.id !== id
+        ){
+          return;
+        }
+
+        state.dragNode = null;
+
+        if(!d.dragging){
+
+          selectPerson(id);
+
+        }
+
+      }
+    );
+
+
+    g.addEventListener(
+      'pointercancel',
+      () => {
+
+        state.dragNode = null;
+
+      }
+    );
+
+
+    els.nodes.append(g);
+
+  });
+
+
+  /* PERSON TO PERSON LINES */
+
+  state.connections.forEach(
+    (c,i) => {
+
+      const a =
+        String(c['ID A'] || '');
+
+      const b =
+        String(c['ID B'] || '');
+
+      if(!a || !b) return;
+
+      const path =
+        el(
+          'line',
+          {
+            class:'line person-link',
+            stroke:'#fff',
+            'stroke-width':'4.4',
+            'stroke-opacity':'.17',
+            'data-a':a,
+            'data-b':b,
+            'data-i':i
+          }
+        );
+
+      els.links.append(path);
+
+    }
+  );
+
+
+  /* PERSON TO SAMU LINES */
+
+  state.people.forEach(p => {
+
+    const id =
+      String(p.ID);
+
+    const cat =
+      ca(p['Tipo']);
+
+    const line =
+      el(
+        'line',
+        {
+          class:'line samu-link',
+
+          stroke:
+            state.colorMap.get(cat)
+            || '#aaa',
+
+          'stroke-width':'6',
+
+          'stroke-linecap':'round',
+
+          'data-id':id
+        }
+      );
+
+    els.links.append(line);
+
+  });
+
 }
-function renderLegend(){els.legend.innerHTML=state.categories.map(c=>`<div class="legend-item"><span class="legend-dot" style="background:${state.colorMap.get(c)}"></span>${escapeHtml(c)}</div>`).join('')}
-function escapeHtml(s){return String(s).replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\\':'&#39;'}[m]))}
-function visualPos(id,t){const p=state.positions.get(id);const amp=2.6;const w=Math.sin(t*.00045+p.phase)*amp;const q=Math.cos(t*.00036+p.phase*.7)*amp*.7;return {x:p.x+w,y:p.y+q}}
+
+
+/* -----------------------------
+   LEGEND
+----------------------------- */
+
+function renderLegend(){
+
+  els.legend.innerHTML =
+    state.categories
+      .map(
+        c =>
+          `
+          <div class="legend-item">
+            <span
+              class="legend-dot"
+              style="background:${state.colorMap.get(c)}"
+            ></span>
+            ${escapeHtml(c)}
+          </div>
+          `
+      )
+      .join('');
+
+}
+
+
+/* -----------------------------
+   FLOATING ANIMATION
+----------------------------- */
+
+function visualPos(id,t){
+
+  const p =
+    state.positions.get(id);
+
+  const amp = 2.6;
+
+  const w =
+    Math.sin(
+      t * .00045 +
+      p.phase
+    ) * amp;
+
+  const q =
+    Math.cos(
+      t * .00036 +
+      p.phase * .7
+    ) *
+    amp *
+    .7;
+
+  return {
+
+    x:p.x + w,
+
+    y:p.y + q
+
+  };
+
+}
+
+
+/* -----------------------------
+   ANIMATION
+----------------------------- */
+
 function tick(t){
- const hidden=state.selected?new Set([state.selected,...directNeighbors(state.selected)]):null;
- [...els.nodes.children].forEach(g=>{const id=g.dataset.id;const pos=visualPos(id,t);g.setAttribute('transform',`translate(${pos.x} ${pos.y})`);g.style.display=hidden&& !hidden.has(id)?'none':'';});
- [...els.links.children].forEach(l=>{if(l.classList.contains('person-link')){const a=l.dataset.a,b=l.dataset.b;const pa=visualPos(a,t),pb=visualPos(b,t);l.setAttribute('x1',pa.x);l.setAttribute('y1',pa.y);l.setAttribute('x2',pb.x);l.setAttribute('y2',pb.y);const show=!hidden|| (hidden.has(a)&&hidden.has(b));l.style.display=show?'':'none'}else{const id=l.dataset.id,p=visualPos(id,t);l.setAttribute('x1',0);l.setAttribute('y1',0);l.setAttribute('x2',p.x);l.setAttribute('y2',p.y);l.style.display=!hidden||hidden.has(id)?'':'none'}});
- updateSamuVisibility(hidden);requestAnimationFrame(tick)
+
+  const hidden =
+    state.selected
+      ? new Set(
+          [
+            state.selected,
+            ...directNeighbors(
+              state.selected
+            )
+          ]
+        )
+      : null;
+
+
+  /* PEOPLE */
+
+  [
+    ...els.nodes.children
+  ].forEach(g => {
+
+    const id =
+      g.dataset.id;
+
+    const pos =
+      visualPos(id,t);
+
+    g.setAttribute(
+      'transform',
+      `translate(${pos.x} ${pos.y})`
+    );
+
+    g.style.display =
+      hidden &&
+      !hidden.has(id)
+        ? 'none'
+        : '';
+
+  });
+
+
+  /* LINES */
+
+  [
+    ...els.links.children
+  ].forEach(l => {
+
+    if(
+      l.classList.contains(
+        'person-link'
+      )
+    ){
+
+      const a =
+        l.dataset.a;
+
+      const b =
+        l.dataset.b;
+
+      const pa =
+        visualPos(a,t);
+
+      const pb =
+        visualPos(b,t);
+
+      l.setAttribute(
+        'x1',
+        pa.x
+      );
+
+      l.setAttribute(
+        'y1',
+        pa.y
+      );
+
+      l.setAttribute(
+        'x2',
+        pb.x
+      );
+
+      l.setAttribute(
+        'y2',
+        pb.y
+      );
+
+
+      const show =
+        !hidden ||
+        (
+          hidden.has(a) &&
+          hidden.has(b)
+        );
+
+      l.style.display =
+        show ? '' : '';
+
+      if(hidden){
+
+        l.style.display =
+          show ? '' : 'none';
+
+      }
+
+    }
+
+    else{
+
+      const id =
+        l.dataset.id;
+
+      const p =
+        visualPos(id,t);
+
+      l.setAttribute(
+        'x1',
+        0
+      );
+
+      l.setAttribute(
+        'y1',
+        0
+      );
+
+      l.setAttribute(
+        'x2',
+        p.x
+      );
+
+      l.setAttribute(
+        'y2',
+        p.y
+      );
+
+      l.style.display =
+        !hidden ||
+        hidden.has(id)
+          ? ''
+          : 'none';
+
+    }
+
+  });
+
+
+  /*
+    SAMU ALWAYS VISIBLE
+  */
+
+  updateSamuVisibility(hidden);
+
+  requestAnimationFrame(tick);
+
 }
-function updateSamuVisibility(hidden){els.samu.style.display='block';els.samu.style.visibility='visible';}
-function directNeighbors(id){const s=new Set();state.connections.forEach(c=>{const a=String(c['ID A']||''),b=String(c['ID B']||'');if(a===id)s.add(b);if(b===id)s.add(a)});return [...s]}
-function applyView(){els.scene.style.transform=`translate(${state.tx}px,${state.ty}px) scale(${state.scale})`}
+
+
+function updateSamuVisibility(hidden){
+
+  els.samu.style.display =
+    'block';
+
+  els.samu.style.visibility =
+    'visible';
+
+}
+
+
+/* -----------------------------
+   CONNECTION HELPERS
+----------------------------- */
+
+function directNeighbors(id){
+
+  const s =
+    new Set();
+
+  state.connections.forEach(c => {
+
+    const a =
+      String(c['ID A'] || '');
+
+    const b =
+      String(c['ID B'] || '');
+
+    if(a === id){
+
+      s.add(b);
+
+    }
+
+    if(b === id){
+
+      s.add(a);
+
+    }
+
+  });
+
+  return [...s];
+
+}
+
+
+/* -----------------------------
+   VIEW
+----------------------------- */
+
+function applyView(){
+
+  els.scene.style.transform =
+    `translate(${state.tx}px,${state.ty}px) scale(${state.scale})`;
+
+}
+
+
 function fitView(){
- // Manté SAMU exactament al centre de la pantalla i calcula l'escala
- // a partir de la distància màxima de qualsevol element respecte del centre.
- const pts=[{x:0,y:0,r:62}];
- state.positions.forEach(p=>pts.push({x:p.x,y:p.y,r:(p.r||24)+28}));
- let maxX=62,maxY=62;
- for(const p of pts){maxX=Math.max(maxX,Math.abs(p.x)+p.r);maxY=Math.max(maxY,Math.abs(p.y)+p.r)}
- const sidePadding=44,topBottomPadding=170;
- const availableW=Math.max(260,innerWidth-sidePadding*2);
- const availableH=Math.max(260,innerHeight-topBottomPadding);
- state.scale=clamp(Math.min(availableW/(maxX*2),availableH/(maxY*2)),.25,3);
- // El sistema de coordenades de la xarxa té (0,0) al centre: això deixa
- // el cercle blanc de SAMU exactament al centre de la finestra.
- state.tx=0;
- state.ty=0;
- applyView();
+
+  /*
+    SAMU ÉS SEMPRE EL CENTRE.
+
+    El sistema de coordenades de l'SVG té
+    el punt 0,0 exactament al centre.
+  */
+
+  const pts = [
+    {
+      x:0,
+      y:0,
+      r:62
+    }
+  ];
+
+  state.positions.forEach(p => {
+
+    pts.push({
+      x:p.x,
+      y:p.y,
+      r:(p.r || 24) + 28
+    });
+
+  });
+
+
+  let maxX = 62;
+
+  let maxY = 62;
+
+
+  for(const p of pts){
+
+    maxX =
+      Math.max(
+        maxX,
+        Math.abs(p.x) + p.r
+      );
+
+    maxY =
+      Math.max(
+        maxY,
+        Math.abs(p.y) + p.r
+      );
+
+  }
+
+
+  const sidePadding = 44;
+
+  const topBottomPadding = 170;
+
+
+  const availableW =
+    Math.max(
+      260,
+      innerWidth -
+      sidePadding * 2
+    );
+
+
+  const availableH =
+    Math.max(
+      260,
+      innerHeight -
+      topBottomPadding
+    );
+
+
+  state.scale =
+    clamp(
+      Math.min(
+        availableW /
+          (maxX * 2),
+
+        availableH /
+          (maxY * 2)
+      ),
+
+      .25,
+      3
+    );
+
+
+  /*
+    MUY IMPORTANTE:
+
+    0,0 del SVG está exactamente
+    debajo de .scene, que está en
+    50% / 50%.
+
+    Por tanto tx y ty tienen que ser 0.
+  */
+
+  state.tx = 0;
+
+  state.ty = 0;
+
+
+  applyView();
+
 }
-function resetView(){fitView()}
-function zoom(f,cx=innerWidth/2,cy=innerHeight/2){const old=state.scale;const next=clamp(old*f,.55,2.35);const ratio=next/old;const centerX=innerWidth/2,centerY=innerHeight/2;state.tx=(cx-centerX)*(1-ratio)+state.tx*ratio;state.ty=(cy-centerY)*(1-ratio)+state.ty*ratio;state.scale=next;applyView()}
-function selectPerson(id){state.selected=id;document.body.classList.add('side-open');showSide(id)}
-function closeSide(){state.selected=null;document.body.classList.remove('side-open');}
-function refFor(id){return state.references.find(r=>String(r.ID)===String(id))}
-function showSide(id){const p=state.people.find(x=>String(x.ID)===String(id));if(!p)return;const neigh=directNeighbors(id).map(n=>state.people.find(x=>String(x.ID)===n)).filter(Boolean);const worlds=[...new Set(neigh.map(x=>ca(x['Tipo'])))];const ref=refFor(id);els.sideContent.innerHTML=`<div class="side-kicker">PERSONA</div><h1 class="side-title">${escapeHtml(personLabel(p['Nombre']))}</h1><div class="meta"><div><b>TIPUS</b><span>${escapeHtml(ca(p['Tipo']))}</span></div><div><b>QUAN</b><span>${escapeHtml(ca(p['Hace cuánto conoció a Samu']))}</span></div><div style="grid-column:1/-1"><b>LLOC / ESDEVENIMENT</b><span>${escapeHtml(ca(p['Lugar / evento']))}</span></div></div>${worlds.length?`<div class="section"><h3>ELS MONS QUE HAS CONNECTAT</h3><div class="worlds">${worlds.map(w=>`<span class="pill">${escapeHtml(w)}</span>`).join('')}</div></div>`:''}<div class="section"><h3>LI HAS PRESENTAT</h3><div class="connections-list">${neigh.length?neigh.map(n=>`<div class="conn"><span>${escapeHtml(personLabel(n['Nombre']))}</span><small>${escapeHtml(ca(n['Tipo']))}</small></div>`).join(''):'<span class="empty">No consta</span>'}</div></div>${ref&&norm(ref['Anécdota / recuerdo'])?`<div class="section"><h3>RECORD</h3><div class="memory">${escapeHtml(ref['Anécdota / recuerdo'])}</div></div>`:''}`}
-const stage=document.getElementById('stage');stage.addEventListener('pointerdown',e=>{if(e.target.closest('.person-node'))return;state.draggingCanvas=true;stage.classList.add('dragging');stage.setPointerCapture(e.pointerId);state.startX=e.clientX;state.startY=e.clientY;state.baseTx=state.tx;state.baseTy=state.ty});stage.addEventListener('pointermove',e=>{if(!state.draggingCanvas)return;state.tx=state.baseTx+e.clientX-state.startX;state.ty=state.baseTy+e.clientY-state.startY;applyView()});stage.addEventListener('pointerup',e=>{if(state.draggingCanvas){state.draggingCanvas=false;stage.classList.remove('dragging')}});stage.addEventListener('click',e=>{if(!e.target.closest('.person-node'))closeSide()});stage.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?1.09:.917,e.clientX,e.clientY)},{passive:false});
-document.getElementById('zoomIn').onclick=()=>zoom(1.14);document.getElementById('zoomOut').onclick=()=>zoom(.88);document.getElementById('reset').onclick=()=>fitView();document.getElementById('closeSide').onclick=()=>closeSide();window.addEventListener('resize',()=>fitView());
-(async()=>{try{await loadWorkbook();buildModel()}catch(err){console.error(err);els.error.style.display='grid';els.errorText.textContent=err.message}})();
+
+
+function resetView(){
+
+  fitView();
+
+}
+
+
+function zoom(
+  f,
+  cx=innerWidth/2,
+  cy=innerHeight/2
+){
+
+  const old =
+    state.scale;
+
+  const next =
+    clamp(
+      old * f,
+      .25,
+      2.35
+    );
+
+  const ratio =
+    next / old;
+
+  const centerX =
+    innerWidth / 2;
+
+  const centerY =
+    innerHeight / 2;
+
+
+  state.tx =
+    (cx - centerX) *
+      (1 - ratio)
+    +
+    state.tx * ratio;
+
+
+  state.ty =
+    (cy - centerY) *
+      (1 - ratio)
+    +
+    state.ty * ratio;
+
+
+  state.scale =
+    next;
+
+
+  applyView();
+
+}
+
+
+/* -----------------------------
+   SIDE PANEL
+----------------------------- */
+
+function selectPerson(id){
+
+  state.selected =
+    id;
+
+  document.body.classList.add(
+    'side-open'
+  );
+
+  showSide(id);
+
+}
+
+
+function closeSide(){
+
+  state.selected = null;
+
+  document.body.classList.remove(
+    'side-open'
+  );
+
+}
+
+
+function refFor(id){
+
+  return state.references.find(
+    r =>
+      String(r.ID) ===
+      String(id)
+  );
+
+}
+
+
+function showSide(id){
+
+  const p =
+    state.people.find(
+      x =>
+        String(x.ID) ===
+        String(id)
+    );
+
+  if(!p) return;
+
+
+  const neigh =
+    directNeighbors(id)
+      .map(
+        n =>
+          state.people.find(
+            x =>
+              String(x.ID) ===
+              String(n)
+          )
+      )
+      .filter(Boolean);
+
+
+  const worlds = [
+    ...new Set(
+      neigh.map(
+        x => ca(x['Tipo'])
+      )
+    )
+  ];
+
+
+  const ref =
+    refFor(id);
+
+
+  els.sideContent.innerHTML = `
+
+    <div class="side-kicker">
+      PERSONA
+    </div>
+
+
+    <h1 class="side-title">
+      ${escapeHtml(
+        personLabel(
+          p['Nombre']
+        )
+      )}
+    </h1>
+
+
+    <div class="meta">
+
+      <div>
+        <b>TIPUS</b>
+
+        <span>
+          ${escapeHtml(
+            ca(p['Tipo'])
+          )}
+        </span>
+      </div>
+
+
+      <div>
+        <b>QUAN</b>
+
+        <span>
+          ${escapeHtml(
+            ca(
+              p['Hace cuánto conoció a Samu']
+            )
+          )}
+        </span>
+      </div>
+
+
+      <div
+        style="grid-column:1/-1"
+      >
+
+        <b>
+          LLOC / ESDEVENIMENT
+        </b>
+
+        <span>
+          ${escapeHtml(
+            ca(
+              p['Lugar / evento']
+            )
+          )}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    ${
+      worlds.length
+      ?
+      `
+      <div class="section">
+
+        <h3>
+          ELS MONS QUE HAS CONNECTAT
+        </h3>
+
+        <div class="worlds">
+
+          ${worlds
+            .map(
+              w =>
+                `
+                <span class="pill">
+                  ${escapeHtml(w)}
+                </span>
+                `
+            )
+            .join('')
+          }
+
+        </div>
+
+      </div>
+      `
+      :
+      ''
+    }
+
+
+    <div class="section">
+
+      <h3>
+        LI HAS PRESENTAT
+      </h3>
+
+      <div class="connections-list">
+
+        ${
+          neigh.length
+
+          ?
+
+          neigh
+            .map(
+              n =>
+                `
+                <div class="conn">
+
+                  <span>
+                    ${escapeHtml(
+                      personLabel(
+                        n['Nombre']
+                      )
+                    )}
+                  </span>
+
+                  <small>
+                    ${escapeHtml(
+                      ca(n['Tipo'])
+                    )}
+                  </small>
+
+                </div>
+                `
+            )
+            .join('')
+
+          :
+
+          `
+          <span class="empty">
+            No consta
+          </span>
+          `
+        }
+
+      </div>
+
+    </div>
+
+
+    ${
+      ref &&
+      norm(
+        ref['Anécdota / recuerdo']
+      )
+
+      ?
+
+      `
+      <div class="section">
+
+        <h3>
+          RECORD
+        </h3>
+
+        <div class="memory">
+          ${escapeHtml(
+            ref[
+              'Anécdota / recuerdo'
+            ]
+          )}
+        </div>
+
+      </div>
+      `
+
+      :
+
+      ''
+    }
+
+  `;
+
+}
+
+
+/* -----------------------------
+   CANVAS DRAG
+----------------------------- */
+
+const stage =
+  document.getElementById(
+    'stage'
+  );
+
+
+stage.addEventListener(
+  'pointerdown',
+  e => {
+
+    if(
+      e.target.closest(
+        '.person-node'
+      )
+    ){
+
+      return;
+
+    }
+
+
+    state.draggingCanvas =
+      true;
+
+    stage.classList.add(
+      'dragging'
+    );
+
+    stage.setPointerCapture(
+      e.pointerId
+    );
+
+
+    state.startX =
+      e.clientX;
+
+    state.startY =
+      e.clientY;
+
+
+    state.baseTx =
+      state.tx;
+
+    state.baseTy =
+      state.ty;
+
+  }
+);
+
+
+stage.addEventListener(
+  'pointermove',
+  e => {
+
+    if(
+      !state.draggingCanvas
+    ){
+
+      return;
+
+    }
+
+
+    state.tx =
+      state.baseTx +
+      e.clientX -
+      state.startX;
+
+
+    state.ty =
+      state.baseTy +
+      e.clientY -
+      state.startY;
+
+
+    applyView();
+
+  }
+);
+
+
+stage.addEventListener(
+  'pointerup',
+  () => {
+
+    if(
+      state.draggingCanvas
+    ){
+
+      state.draggingCanvas =
+        false;
+
+      stage.classList.remove(
+        'dragging'
+      );
+
+    }
+
+  }
+);
+
+
+/* -----------------------------
+   CLICK OUTSIDE
+----------------------------- */
+
+stage.addEventListener(
+  'click',
+  e => {
+
+    if(
+      !e.target.closest(
+        '.person-node'
+      )
+    ){
+
+      closeSide();
+
+    }
+
+  }
+);
+
+
+/* -----------------------------
+   ZOOM
+----------------------------- */
+
+stage.addEventListener(
+  'wheel',
+  e => {
+
+    e.preventDefault();
+
+    zoom(
+      e.deltaY < 0
+        ? 1.09
+        : .917,
+      e.clientX,
+      e.clientY
+    );
+
+  },
+  {
+    passive:false
+  }
+);
+
+
+/* -----------------------------
+   BUTTONS
+----------------------------- */
+
+document.getElementById(
+  'zoomIn'
+).onclick =
+  () =>
+    zoom(1.14);
+
+
+document.getElementById(
+  'zoomOut'
+).onclick =
+  () =>
+    zoom(.88);
+
+
+document.getElementById(
+  'reset'
+).onclick =
+  () =>
+    fitView();
+
+
+document.getElementById(
+  'closeSide'
+).onclick =
+  () =>
+    closeSide();
+
+
+/* -----------------------------
+   RESIZE
+----------------------------- */
+
+window.addEventListener(
+  'resize',
+  () =>
+    fitView()
+);
+
+
+/* -----------------------------
+   START
+----------------------------- */
+
+(async() => {
+
+  try{
+
+    await loadWorkbook();
+
+    buildModel();
+
+  }
+
+  catch(err){
+
+    console.error(err);
+
+    els.error.style.display =
+      'grid';
+
+    els.errorText.textContent =
+      err.message;
+
+  }
+
+})();
+
 </script>
-</body></html>
+
+</body>
+</html>
