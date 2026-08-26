@@ -75,18 +75,20 @@ function updateSamuVisibility(hidden){els.samu.style.display='block';els.samu.st
 function directNeighbors(id){const s=new Set();state.connections.forEach(c=>{const a=String(c['ID A']||''),b=String(c['ID B']||'');if(a===id)s.add(b);if(b===id)s.add(a)});return [...s]}
 function applyView(){els.scene.style.transform=`translate(${state.tx}px,${state.ty}px) scale(${state.scale})`}
 function fitView(){
+ // Manté SAMU exactament al centre de la pantalla i calcula l'escala
+ // a partir de la distància màxima de qualsevol element respecte del centre.
  const pts=[{x:0,y:0,r:62}];
  state.positions.forEach(p=>pts.push({x:p.x,y:p.y,r:(p.r||24)+28}));
- let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
- for(const p of pts){minX=Math.min(minX,p.x-p.r);maxX=Math.max(maxX,p.x+p.r);minY=Math.min(minY,p.y-p.r);maxY=Math.max(maxY,p.y+p.r)}
- const sidePadding=44,topBottomPadding=150;
- const contentW=Math.max(1,maxX-minX),contentH=Math.max(1,maxY-minY);
+ let maxX=62,maxY=62;
+ for(const p of pts){maxX=Math.max(maxX,Math.abs(p.x)+p.r);maxY=Math.max(maxY,Math.abs(p.y)+p.r)}
+ const sidePadding=44,topBottomPadding=170;
  const availableW=Math.max(260,innerWidth-sidePadding*2);
  const availableH=Math.max(260,innerHeight-topBottomPadding);
- state.scale=clamp(Math.min(availableW/contentW,availableH/contentH),.25,3);
- const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
- state.tx=innerWidth/2-cx*state.scale;
- state.ty=(innerHeight+65)/2-cy*state.scale;
+ state.scale=clamp(Math.min(availableW/(maxX*2),availableH/(maxY*2)),.25,3);
+ // El sistema de coordenades de la xarxa té (0,0) al centre: això deixa
+ // el cercle blanc de SAMU exactament al centre de la finestra.
+ state.tx=innerWidth/2;
+ state.ty=innerHeight/2;
  applyView();
 }
 function resetView(){fitView()}
