@@ -35,13 +35,33 @@ async function load(){
   unique.forEach(c=>{cats.push(c);colors.set(c,colorFor(c))});
 }
 
+function uniqueConnections(){
+  const unique=new Set();
+
+  data.connections.forEach(c=>{
+    const a=String(c['ID A']||'').trim();
+    const b=String(c['ID B']||'').trim();
+
+    if(!a||!b||a===b)return;
+
+    const key=[a,b].sort().join('|||');
+    unique.add(key);
+  });
+
+  return unique;
+}
+
 function countConns(){
   const m=new Map(data.people.map(p=>[String(p.ID),0]));
-  data.connections.forEach(c=>{
-    const a=String(c['ID A']||''),b=String(c['ID B']||'');
+  const unique=uniqueConnections();
+
+  unique.forEach(key=>{
+    const [a,b]=key.split('|||');
+
     if(m.has(a))m.set(a,m.get(a)+1);
     if(m.has(b))m.set(b,m.get(b)+1);
   });
+
   return m;
 }
 
@@ -114,14 +134,25 @@ function heatmap(){
   const cats2=[...cats];
   const idx=new Map(cats2.map((c,i)=>[c,i]));
   const mat=cats2.map(()=>cats2.map(()=>0));
-  data.connections.forEach(c=>{
-    const a=data.people.find(p=>String(p.ID)===String(c['ID A']||''));
-    const b=data.people.find(p=>String(p.ID)===String(c['ID B']||''));
+  const unique=uniqueConnections();
+
+  unique.forEach(key=>{
+    const [idA,idB]=key.split('|||');
+
+    const a=data.people.find(p=>String(p.ID)===idA);
+    const b=data.people.find(p=>String(p.ID)===idB);
+
     if(!a||!b)return;
-    const i=idx.get(ca(a['Tipo'])),j=idx.get(ca(b['Tipo']));
+
+    const i=idx.get(ca(a['Tipo']));
+    const j=idx.get(ca(b['Tipo']));
+
     if(i==null||j==null)return;
-    mat[i][j]++;if(i!==j)mat[j][i]++;
+
+    mat[i][j]++;
+    if(i!==j)mat[j][i]++;
   });
+
   const max=Math.max(1,...mat.flat());
   let html='<div class="heat" style="grid-template-columns:140px repeat('+cats2.length+',minmax(55px,1fr))"><div></div>';
   cats2.forEach(c=>{html+='<div class="heat-label">'+esc(c)+'</div>'});
@@ -139,54 +170,84 @@ function worldOverlap(){
   const peopleById=new Map(data.people.map(p=>[String(p.ID),p]));
   const cross=new Map();
   const worldStats=new Map(cats.map(c=>[c,{people:new Set(),cross:0}]));
-  data.connections.forEach(c=>{
-    const a=peopleById.get(String(c['ID A']||'')),b=peopleById.get(String(c['ID B']||''));
+  const unique=uniqueConnections();
+
+  unique.forEach(key=>{
+    const [idA,idB]=key.split('|||');
+
+    const a=peopleById.get(idA);
+    const b=peopleById.get(idB);
+
     if(!a||!b)return;
-    const ta=ca(a['Tipo']),tb=ca(b['Tipo']);
+
+    const ta=ca(a['Tipo']);
+    const tb=ca(b['Tipo']);
+
     if(ta===tb)return;
-    const key=[ta,tb].sort().join('|||');
-    cross.set(key,(cross.get(key)||0)+1);
+
+    const pairKey=[ta,tb].sort().join('|||');
+
+    cross.set(pairKey,(cross.get(pairKey)||0)+1);
+
     worldStats.get(ta).people.add(String(a.ID));
     worldStats.get(tb).people.add(String(b.ID));
-    worldStats.get(ta).cross++;worldStats.get(tb).cross++;
+
+    worldStats.get(ta).cross++;
+    worldStats.get(tb).cross++;
   });
+
   const totalCross=[...cross.values()].reduce((a,b)=>a+b,0);
   const top=[...worldStats.entries()].filter(([,v])=>v.cross>0).sort((a,b)=>b[1].cross-a[1].cross).slice(0,3);
+
   if(!top.length)return '<div class="no-data">No hi ha connexions entre tipologies diferents a CONEXIONES.</div>';
+
   const maxPeople=Math.max(1,...top.map(([,v])=>v.people.size));
   const sizes=[185,165,145],pos=[['24%','36%'],['54%','46%'],['39%','62%']];
+
   let circles='';
+
   top.forEach(([c,v],i)=>{
     const size=sizes[i]||135,left=pos[i]?.[0]||'50%',topPos=pos[i]?.[1]||'50%',scale=.85+.15*(v.people.size/maxPeople),bg=colorFor(c).replace('hsl(','hsla(').replace(')',', .08)');
+
     circles+='<div class="venn-circle" style="width:'+size+'px;height:'+size+'px;left:calc('+left+' - '+size/2+'px);top:calc('+topPos+' - '+size/2+'px);color:'+colors.get(c)+';background:'+bg+';opacity:.9;transform:scale('+scale+')"><span>'+esc(c)+'<br><small>'+v.cross+' pont'+(v.cross===1?'':'s')+'</small></span></div>';
   });
+
   let summary='';
-  top.forEach(([c,v],i)=>{const pct=totalCross?Math.round(v.cross/totalCross*100):0;summary+='<div class="world-card"><div class="lab">'+String(i+1).padStart(2,'0')+' · MÓN</div><div class="name">'+esc(c)+'</div><div class="detail">'+v.people.size+' persones implicades en connexions amb altres mons · '+v.cross+' connexions creuades.</div><div class="pill">'+pct+'% de les connexions entre tipologies</div></div>'});
+
+  top.forEach(([c,v],i)=>{
+    const pct=totalCross?Math.round(v.cross/totalCross*100):0;
+
+    summary+='<div class="world-card"><div class="lab">'+String(i+1).padStart(2,'0')+' · MÓN</div><div class="name">'+esc(c)+'</div><div class="detail">'+v.people.size+' persones implicades en connexions amb altres mons · '+v.cross+' connexions creuades.</div><div class="pill">'+pct+'% de les connexions entre tipologies</div></div>';
+  });
+
   return '<div class="worlds-wrap"><div class="venn">'+circles+'<div class="world-foot" style="position:absolute;left:18px;right:18px;bottom:14px">La mida del cercle representa quantes persones del món participen en connexions amb altres tipologies. El percentatge correspon a la part dels ponts entre tipologies en què participa cada món.</div></div><div class="world-summary">'+summary+'<div class="world-foot">És una visualització de solapament, no un Venn matemàtic: només es mostren els tres mons amb més connexions creuades reals.</div></div></div>';
 }
 
 function bridge(){
   const m=countConns();
   const max=data.people.reduce((best,p)=>{const n=m.get(String(p.ID))||0;return n>(best?.n??-1)?{p,n}:best},null);
+
   const connected=[...m.values()].filter(n=>n>0).length;
   const connectedPct=data.people.length?(connected/data.people.length*100):0;
+  const totalConnections=uniqueConnections().size;
 
-  return '<div class="bridge"><div><h2>Cada persona que has conegut pot obrir-te un món nou.</h2><p>“Cada persona que has conegut no és només una amistat: és una porta a altres persones, altres grups i altres històries.”</p></div><div class="metrics"><div class="metric"><div class="lab">Persones</div><div class="val">'+data.people.length+'</div></div><div class="metric"><div class="lab">Connexions</div><div class="val">'+data.connections.length+'</div></div><div class="metric"><div class="lab">Persones connectades</div><div class="val">'+connected+' · '+connectedPct.toFixed(0)+'%</div></div><div class="metric"><div class="lab">Més connexions directes</div><div class="val">'+(max?esc(label(max.p['Nombre'])):'No consta')+'</div></div></div></div>';
+  return '<div class="bridge"><div><h2>Cada persona que has conegut pot obrir-te un món nou.</h2><p>“Cada persona que has conegut no és només una amistat: és una porta a altres persones, altres grups i altres històries.”</p></div><div class="metrics"><div class="metric"><div class="lab">Persones</div><div class="val">'+data.people.length+'</div></div><div class="metric"><div class="lab">Connexions</div><div class="val">'+totalConnections+'</div></div><div class="metric"><div class="lab">Persones connectades</div><div class="val">'+connected+' · '+connectedPct.toFixed(0)+'%</div></div><div class="metric"><div class="lab">Més connexions directes</div><div class="val">'+(max?esc(label(max.p['Nombre'])):'No consta')+'</div></div></div></div>';
 }
 
 function helpText(key){
   const map={
     univers:'Representa la distribució real de les persones per tipologia. Utilitza PERSONAS: la columna “Tipo”. El donut i les barres compten files de persones per categoria i calculen el percentatge sobre el total.',
-    nexes:'És un recompte directe de les connexions que apareixen a CONEXIONES. Utilitza “ID A” i “ID B” i suma una connexió a cada persona quan hi participa una fila. No és una mètrica científica.',
+    nexes:'És un recompte de les connexions úniques que apareixen a CONEXIONES. Si dues persones indiquen mútuament que es coneixen, la relació només es compta una vegada. Utilitza “ID A” i “ID B”.',
     evolucio:'Mostra només els anys exactes de quatre xifres que consten realment a PERSONAS, columna “Fecha aprox.”. L’eix cronològic col·loca aquests anys en ordre i mostra els noms que tenen aquell any; cada barra representa el nombre de persones amb aquell any. Els valors no exactes o buits no es converteixen ni s’infereixen.',
-    mons:'Mostra els tres mons amb més connexions entre tipologies. Utilitza PERSONAS (“Tipo”) i CONEXIONES (“ID A”, “ID B”). El recompte de ponts és directe; el percentatge de cada món és la seva part sobre el total de connexions entre tipologies. No és una mètrica científica ni un Venn matemàtic.',
-    pont:'Recull estadístiques calculades directament amb les dades del fitxer: persones de PERSONAS, files de CONEXIONES, persones amb almenys una connexió i persona amb més incidència a les files de CONEXIONES.'
+    mons:'Mostra els tres mons amb més connexions úniques entre tipologies. Utilitza PERSONAS (“Tipo”) i CONEXIONES (“ID A”, “ID B”). Si dues persones indiquen mútuament que es coneixen, la relació només es compta una vegada.',
+    pont:'Recull estadístiques calculades directament amb les dades del fitxer: persones de PERSONAS, connexions úniques entre persones, persones amb almenys una connexió i persona amb més connexions directes.'
   };
   return map[key]||'';
 }
 
 function render(){
   const content=document.getElementById('content');
+
   content.innerHTML=
     makeSection('01','EL PONT','Cada persona que has conegut pot obrir-te un món nou.',bridge(),'pont',helpText('pont'))+
     makeSection('02','L’EVOLUCIÓ','Com ha crescut la teva xarxa?',timeline(),'evolucio',helpText('evolucio'))+
