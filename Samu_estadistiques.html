@@ -168,8 +168,10 @@ function worldOverlap(){
 function bridge(){
   const m=countConns();
   const max=data.people.reduce((best,p)=>{const n=m.get(String(p.ID))||0;return n>(best?.n??-1)?{p,n}:best},null);
-  const avg=data.people.length?data.connections.length*2/data.people.length:0;
-  return '<div class="bridge"><div><h2>Cada persona que has conegut pot obrir-te un món nou.</h2><p>“Cada persona que has conegut no és només una amistat: és una porta a altres persones, altres grups i altres històries.”</p></div><div class="metrics"><div class="metric"><div class="lab">Persones</div><div class="val">'+data.people.length+'</div></div><div class="metric"><div class="lab">Connexions</div><div class="val">'+data.connections.length+'</div></div><div class="metric"><div class="lab">Mitjana de connexions per persona</div><div class="val">'+avg.toFixed(1)+'</div></div><div class="metric"><div class="lab">Més connexions directes</div><div class="val">'+(max?esc(label(max.p['Nombre'])):'No consta')+'</div></div></div></div>';
+  const connected=[...m.values()].filter(n=>n>0).length;
+  const connectedPct=data.people.length?(connected/data.people.length*100):0;
+
+  return '<div class="bridge"><div><h2>Cada persona que has conegut pot obrir-te un món nou.</h2><p>“Cada persona que has conegut no és només una amistat: és una porta a altres persones, altres grups i altres històries.”</p></div><div class="metrics"><div class="metric"><div class="lab">Persones</div><div class="val">'+data.people.length+'</div></div><div class="metric"><div class="lab">Connexions</div><div class="val">'+data.connections.length+'</div></div><div class="metric"><div class="lab">Persones connectades</div><div class="val">'+connected+' · '+connectedPct.toFixed(0)+'%</div></div><div class="metric"><div class="lab">Més connexions directes</div><div class="val">'+(max?esc(label(max.p['Nombre'])):'No consta')+'</div></div></div></div>';
 }
 
 function helpText(key){
@@ -178,7 +180,7 @@ function helpText(key){
     nexes:'És un recompte directe de les connexions que apareixen a CONEXIONES. Utilitza “ID A” i “ID B” i suma una connexió a cada persona quan hi participa una fila. No és una mètrica científica.',
     evolucio:'Mostra només els anys exactes de quatre xifres que consten realment a PERSONAS, columna “Fecha aprox.”. L’eix cronològic col·loca aquests anys en ordre i mostra els noms que tenen aquell any; cada barra representa el nombre de persones amb aquell any. Els valors no exactes o buits no es converteixen ni s’infereixen.',
     mons:'Mostra els tres mons amb més connexions entre tipologies. Utilitza PERSONAS (“Tipo”) i CONEXIONES (“ID A”, “ID B”). El recompte de ponts és directe; el percentatge de cada món és la seva part sobre el total de connexions entre tipologies. No és una mètrica científica ni un Venn matemàtic.',
-    pont:'Recull només estadístiques calculades directament amb les dades del fitxer: persones de PERSONAS, files de CONEXIONES, mitjana de connexions per persona i persona amb més incidència a les files de CONEXIONES.'
+    pont:'Recull estadístiques calculades directament amb les dades del fitxer: persones de PERSONAS, files de CONEXIONES, persones amb almenys una connexió i persona amb més incidència a les files de CONEXIONES.'
   };
   return map[key]||'';
 }
@@ -186,11 +188,11 @@ function helpText(key){
 function render(){
   const content=document.getElementById('content');
   content.innerHTML=
-    makeSection('01','L’EVOLUCIÓ','Com ha crescut la teva xarxa?',timeline(),'evolucio',helpText('evolucio'))+
-    makeSection('02','EL TEU UNIVERS','D’on ve la teva gent?','<div class="grid">'+donut()+bars()+'</div>','univers',helpText('univers'))+
-    makeSection('03','ELS NEXES','Qui connecta més mons?',ranking(),'nexes',helpText('nexes'))+
+    makeSection('01','EL PONT','Cada persona que has conegut pot obrir-te un món nou.',bridge(),'pont',helpText('pont'))+
+    makeSection('02','L’EVOLUCIÓ','Com ha crescut la teva xarxa?',timeline(),'evolucio',helpText('evolucio'))+
+    makeSection('03','EL TEU UNIVERS','D’on ve la teva gent?','<div class="grid">'+donut()+bars()+'</div>','univers',helpText('univers'))+
     makeSection('04','MONS QUE ES BARREGEN','Quins cercles es creuen?',worldOverlap(),'mons',helpText('mons'))+
-    makeSection('05','EL PONT','Cada persona que has conegut pot obrir-te un món nou.',bridge(),'pont',helpText('pont'));
+    makeSection('05','ELS NEXES','Qui connecta més mons?',ranking(),'nexes',helpText('nexes'));
 
   requestAnimationFrame(()=>document.querySelectorAll('.donut circle[data-dash]').forEach(e=>e.setAttribute('stroke-dasharray',e.dataset.dash+' '+1885)));
   document.querySelectorAll('.bar-fill').forEach((e,i)=>setTimeout(()=>e.style.width=e.dataset.w+'%',80+i*35));
