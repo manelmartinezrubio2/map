@@ -663,7 +663,12 @@ const state = {
   dragNode: null,
   draggingCanvas: false,
 
-  animStart: performance.now()
+  animStart: performance.now(),
+  introStart: null,
+  introDuration: 5000,
+  introFadeDuration: 650,
+  introDelays: new Map(),
+  introReady: false
 
 };
 
@@ -780,6 +785,92 @@ function personColumnC(p){
   return keys.length >= 3
     ? norm(p[keys[2]])
     : '';
+
+}
+
+
+function yearFromPerson(p){
+
+  const raw = personColumnC(p);
+  const m = raw.match(/(?:19|20)\d{2}/);
+
+  return m ? Number(m[0]) : Infinity;
+
+}
+
+
+function buildIntroAnimation(){
+
+  const ordered =
+    state.people
+      .map((p,index) => ({
+        id:String(p.ID),
+        year:yearFromPerson(p),
+        index
+      }))
+      .sort((a,b) => {
+
+        if(a.year !== b.year)
+          return a.year - b.year;
+
+        return a.index - b.index;
+
+      });
+
+  state.introDelays = new Map();
+
+  const n = ordered.length;
+  const maxDelay =
+    Math.max(0, state.introDuration - state.introFadeDuration);
+
+  ordered.forEach((item,i) => {
+
+    const delay =
+      n <= 1
+        ? 0
+        : maxDelay * (i / (n - 1));
+
+    state.introDelays.set(
+      item.id,
+      delay
+    );
+
+  });
+
+  state.introStart = performance.now();
+  state.introReady = true;
+
+}
+
+
+function introOpacity(id,t){
+
+  if(!state.introReady)
+    return 1;
+
+  const delay =
+    state.introDelays.get(id) ?? 0;
+
+  const elapsed =
+    t - state.introStart;
+
+  if(elapsed <= delay)
+    return 0;
+
+  if(elapsed >= delay + state.introFadeDuration)
+    return 1;
+
+  return (elapsed - delay) / state.introFadeDuration;
+
+}
+
+
+function introLineOpacity(a,b,t){
+
+  return Math.min(
+    introOpacity(a,t),
+    introOpacity(b,t)
+  );
 
 }
 
@@ -1048,6 +1139,8 @@ function buildModel(){
   renderStatic();
 
   renderLegend();
+
+  buildIntroAnimation();
 
   resetView();
 
@@ -1494,6 +1587,9 @@ function tick(t){
       `translate(${pos.x} ${pos.y})`
     );
 
+    g.style.opacity =
+      introOpacity(id,t);
+
     g.style.display =
       hidden &&
       !hidden.has(id)
@@ -1558,6 +1654,9 @@ function tick(t){
       l.style.display =
         show ? '' : '';
 
+      l.style.opacity =
+        introLineOpacity(a,b,t);
+
       if(hidden){
 
         l.style.display =
@@ -1595,6 +1694,9 @@ function tick(t){
         p.y
       );
 
+      l.style.opacity =
+        introOpacity(id,t);
+
       l.style.display =
         !hidden ||
         hidden.has(id)
@@ -1624,6 +1726,24 @@ function updateSamuVisibility(hidden){
 
   els.samu.style.visibility =
     'visible';
+
+  if(state.introReady && state.introStart != null){
+
+    const elapsed =
+      performance.now() - state.introStart;
+
+    const p =
+      Math.max(
+        0,
+        Math.min(
+          1,
+          elapsed / state.introFadeDuration
+        )
+      );
+
+    els.samu.style.opacity = p;
+
+  }
 
 }
 
