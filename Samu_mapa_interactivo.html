@@ -768,10 +768,10 @@ function personLabel(name){
 /*
   PERSONAS, COLUMNA C
 
-  La información de "LI HAS PRESENTAT" está en la tercera
-  columna de la hoja PERSONAS. La buscamos por posición para
-  que siga funcionando aunque el encabezado de esa columna
-  cambie.
+  La tercera columna de la hoja PERSONAS contiene el dato
+  de "QUAN": cuándo conoció a Samu. La buscamos por
+  posición para que siga funcionando aunque el encabezado
+  de esa columna cambie.
 */
 function personColumnC(p){
 
@@ -1915,8 +1915,6 @@ function showSide(id){
   const ref =
     refFor(id);
 
-  const presented =
-    personColumnC(p);
 
 
   els.sideContent.innerHTML = `
@@ -1954,7 +1952,7 @@ function showSide(id){
         <span>
           ${escapeHtml(
             ca(
-              p['Hace cuánto conoció a Samu']
+              personColumnC(p)
             )
           )}
         </span>
@@ -2024,17 +2022,32 @@ function showSide(id){
       <div class="connections-list">
 
         ${
-          presented
+          neigh.length
 
           ?
 
-          `
-          <div class="conn">
-            <span>
-              ${escapeHtml(presented)}
-            </span>
-          </div>
-          `
+          neigh
+            .map(
+              n =>
+                `
+                <div class="conn">
+                  <span>
+                    ${escapeHtml(
+                      personLabel(
+                        n['Nombre']
+                      )
+                    )}
+                  </span>
+
+                  <small>
+                    ${escapeHtml(
+                      ca(n['Tipo'])
+                    )}
+                  </small>
+                </div>
+                `
+            )
+            .join('')
 
           :
 
