@@ -69,6 +69,64 @@ a{
   pointer-events:none;
 }
 
+#search{
+  position:absolute;
+  left:50%;
+  top:0;
+  transform:translateX(-50%);
+  width:min(360px,42vw);
+  pointer-events:auto;
+}
+
+#search-input{
+  width:100%;
+  height:40px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  outline:none;
+  background:rgba(13,13,13,.78);
+  color:var(--ink);
+  padding:0 16px;
+  backdrop-filter:blur(10px);
+  font-size:13px;
+}
+
+#search-input::placeholder{
+  color:var(--muted);
+}
+
+#search-input:focus{
+  border-color:rgba(255,255,255,.3);
+}
+
+#search-suggestions{
+  display:none;
+  margin-top:7px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  background:rgba(13,13,13,.94);
+  backdrop-filter:blur(20px);
+  overflow:hidden;
+  box-shadow:0 14px 40px rgba(0,0,0,.35);
+}
+
+.search-suggestion{
+  display:block;
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#f0eee7;
+  text-align:left;
+  padding:11px 14px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.search-suggestion:hover,
+.search-suggestion.active{
+  background:rgba(255,255,255,.07);
+}
+
 .brand{
   pointer-events:auto;
   display:flex;
@@ -444,6 +502,11 @@ a{
     height:10px;
   }
 
+  #search{
+    top:48px;
+    width:min(300px,70vw);
+  }
+
   .tag{
     font-size:11px;
     padding:7px 10px;
@@ -482,6 +545,17 @@ a{
     <div class="brand">
       <span>SAMU SOCIAL MAP</span>
       <img src="logo.png" alt="Logo">
+    </div>
+
+    <div id="search">
+      <input
+        id="search-input"
+        type="search"
+        autocomplete="off"
+        placeholder="Buscar persona..."
+        aria-label="Buscar persona"
+      >
+      <div id="search-suggestions"></div>
     </div>
 
     <div class="tag">
@@ -613,7 +687,10 @@ const els = {
 
   error: document.getElementById('error'),
 
-  errorText: document.getElementById('errorText')
+  errorText: document.getElementById('errorText'),
+
+  searchInput: document.getElementById('search-input'),
+  searchSuggestions: document.getElementById('search-suggestions')
 
 };
 
@@ -684,6 +761,25 @@ function personLabel(name){
   }
 
   return p[0] || 'No consta';
+
+}
+
+
+/*
+  PERSONAS, COLUMNA C
+
+  La información de "LI HAS PRESENTAT" está en la tercera
+  columna de la hoja PERSONAS. La buscamos por posición para
+  que siga funcionando aunque el encabezado de esa columna
+  cambie.
+*/
+function personColumnC(p){
+
+  const keys = Object.keys(p);
+
+  return keys.length >= 3
+    ? norm(p[keys[2]])
+    : '';
 
 }
 
@@ -1819,6 +1915,9 @@ function showSide(id){
   const ref =
     refFor(id);
 
+  const presented =
+    personColumnC(p);
+
 
   els.sideContent.innerHTML = `
 
@@ -1925,34 +2024,17 @@ function showSide(id){
       <div class="connections-list">
 
         ${
-          neigh.length
+          presented
 
           ?
 
-          neigh
-            .map(
-              n =>
-                `
-                <div class="conn">
-
-                  <span>
-                    ${escapeHtml(
-                      personLabel(
-                        n['Nombre']
-                      )
-                    )}
-                  </span>
-
-                  <small>
-                    ${escapeHtml(
-                      ca(n['Tipo'])
-                    )}
-                  </small>
-
-                </div>
-                `
-            )
-            .join('')
+          `
+          <div class="conn">
+            <span>
+              ${escapeHtml(presented)}
+            </span>
+          </div>
+          `
 
           :
 
@@ -2002,6 +2084,168 @@ function showSide(id){
   `;
 
 }
+
+
+/* -----------------------------
+   SEARCH
+----------------------------- */
+
+function searchPeople(query){
+
+  const q =
+    norm(query)
+      .toLocaleLowerCase();
+
+  if(!q){
+
+    els.searchSuggestions.innerHTML = '';
+    els.searchSuggestions.style.display = 'none';
+
+    return [];
+
+  }
+
+  return state.people
+    .filter(p =>
+      norm(p['Nombre'])
+        .toLocaleLowerCase()
+        .includes(q)
+    )
+    .slice(0,8);
+
+}
+
+
+function renderSearchSuggestions(query){
+
+  const matches =
+    searchPeople(query);
+
+  els.searchSuggestions.innerHTML =
+    matches
+      .map(
+        p => {
+
+          const id =
+            String(p.ID);
+
+          return `
+            <button
+              type="button"
+              class="search-suggestion"
+              data-id="${escapeHtml(id)}"
+            >
+              ${escapeHtml(norm(p['Nombre']))}
+            </button>
+          `;
+
+        }
+      )
+      .join('');
+
+  els.searchSuggestions.style.display =
+    matches.length
+      ? 'block'
+      : 'none';
+
+}
+
+
+els.searchInput.addEventListener(
+  'input',
+  e => {
+
+    renderSearchSuggestions(
+      e.target.value
+    );
+
+  }
+);
+
+
+els.searchSuggestions.addEventListener(
+  'pointerdown',
+  e => {
+
+    const item =
+      e.target.closest(
+        '.search-suggestion'
+      );
+
+    if(!item) return;
+
+    e.preventDefault();
+
+    const id =
+      item.dataset.id;
+
+    const p =
+      state.people.find(
+        x =>
+          String(x.ID) === id
+      );
+
+    if(!p) return;
+
+    els.searchInput.value =
+      norm(p['Nombre']);
+
+    els.searchSuggestions.innerHTML = '';
+    els.searchSuggestions.style.display = 'none';
+
+    selectPerson(id);
+
+  }
+);
+
+
+els.searchInput.addEventListener(
+  'keydown',
+  e => {
+
+    if(e.key !== 'Enter') return;
+
+    const matches =
+      searchPeople(
+        e.target.value
+      );
+
+    if(matches.length){
+
+      const p =
+        matches[0];
+
+      e.target.value =
+        norm(p['Nombre']);
+
+      els.searchSuggestions.innerHTML = '';
+      els.searchSuggestions.style.display = 'none';
+
+      selectPerson(
+        String(p.ID)
+      );
+
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  'pointerdown',
+  e => {
+
+    if(
+      !e.target.closest('#search')
+    ){
+
+      els.searchSuggestions.innerHTML = '';
+      els.searchSuggestions.style.display = 'none';
+
+    }
+
+  }
+);
 
 
 /* -----------------------------
