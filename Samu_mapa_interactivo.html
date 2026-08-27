@@ -659,6 +659,7 @@ const state = {
   ty: 0,
 
   selected: null,
+  categoryFilter: null,
 
   dragNode: null,
   draggingCanvas: false,
@@ -1501,7 +1502,13 @@ function renderLegend(){
       .map(
         c =>
           `
-          <div class="legend-item">
+          <div
+            class="legend-item"
+            data-category="${escapeHtml(c)}"
+            role="button"
+            tabindex="0"
+            title="Filtrar por ${escapeHtml(c)}"
+          >
             <span
               class="legend-dot"
               style="background:${state.colorMap.get(c)}"
@@ -1511,6 +1518,54 @@ function renderLegend(){
           `
       )
       .join('');
+
+  els.legend
+    .querySelectorAll('.legend-item')
+    .forEach(item => {
+
+      const activate = () => {
+
+        const category =
+          item.dataset.category;
+
+        state.categoryFilter =
+          state.categoryFilter === category
+            ? null
+            : category;
+
+        els.legend
+          .querySelectorAll('.legend-item')
+          .forEach(other => {
+            other.style.opacity =
+              !state.categoryFilter ||
+              other.dataset.category ===
+                state.categoryFilter
+                ? '1'
+                : '.45';
+          });
+
+      };
+
+      item.addEventListener(
+        'click',
+        e => {
+          e.stopPropagation();
+          activate();
+        }
+      );
+
+      item.addEventListener(
+        'keydown',
+        e => {
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            e.stopPropagation();
+            activate();
+          }
+        }
+      );
+
+    });
 
 }
 
@@ -1590,11 +1645,27 @@ function tick(t){
     g.style.opacity =
       introOpacity(id,t);
 
+    const person =
+      state.people.find(
+        p => String(p.ID) === id
+      );
+
+    const inCategory =
+      !state.categoryFilter ||
+      (
+        person &&
+        ca(person['Tipo']) ===
+          state.categoryFilter
+      );
+
+    const inSelection =
+      !hidden ||
+      hidden.has(id);
+
     g.style.display =
-      hidden &&
-      !hidden.has(id)
-        ? 'none'
-        : '';
+      inCategory && inSelection
+        ? ''
+        : 'none';
 
   });
 
@@ -1644,25 +1715,41 @@ function tick(t){
       );
 
 
-      const show =
+      const showSelection =
         !hidden ||
         (
           hidden.has(a) &&
           hidden.has(b)
         );
 
+      const showCategory =
+        !state.categoryFilter ||
+        (
+          state.people.find(
+            p => String(p.ID) === a
+          ) &&
+          ca(
+            state.people.find(
+              p => String(p.ID) === a
+            )['Tipo']
+          ) === state.categoryFilter &&
+          state.people.find(
+            p => String(p.ID) === b
+          ) &&
+          ca(
+            state.people.find(
+              p => String(p.ID) === b
+            )['Tipo']
+          ) === state.categoryFilter
+        );
+
       l.style.display =
-        show ? '' : '';
+        showSelection && showCategory
+          ? ''
+          : 'none';
 
       l.style.opacity =
         introLineOpacity(a,b,t);
-
-      if(hidden){
-
-        l.style.display =
-          show ? '' : 'none';
-
-      }
 
     }
 
@@ -2374,6 +2461,33 @@ document.addEventListener(
 
       els.searchSuggestions.innerHTML = '';
       els.searchSuggestions.style.display = 'none';
+
+    }
+
+  }
+);
+
+
+/* -----------------------------
+   CATEGORY FILTER CLICK OUTSIDE
+----------------------------- */
+
+document.addEventListener(
+  'click',
+  e => {
+
+    if(
+      state.categoryFilter &&
+      !e.target.closest('#legend')
+    ){
+
+      state.categoryFilter = null;
+
+      els.legend
+        .querySelectorAll('.legend-item')
+        .forEach(item => {
+          item.style.opacity = '1';
+        });
 
     }
 
