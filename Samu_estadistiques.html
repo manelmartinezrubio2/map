@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Samu — Estadístiques</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#070707;--ink:#f4f2eb;--muted:#8b8983;--green:#00b86f;--line:rgba(255,255,255,.1);--card:#101010}*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Helvetica,Arial,sans-serif}body{min-height:100vh}.wrap{max-width:1280px;margin:0 auto;padding:28px 30px 80px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:80px}.brand{display:flex;align-items:center;gap:7px}.brand img{display:block;height:60px;width:auto;object-fit:contain}.hero-logo{display:block;height:195px;width:auto;max-width:100%;object-fit:contain;margin:0 0 28px auto}.hero-copy{display:flex;flex-direction:column;align-items:flex-start}.kicker{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}.back{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#c8c5be}.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:end;margin-bottom:90px}.hero h1{font-size:clamp(52px,8vw,108px);line-height:.9;letter-spacing:-.06em;margin:0;font-weight:650}.hero p{font-size:18px;line-height:1.45;color:#b7b3aa;max-width:470px;margin:0 0 8px}.section{padding:42px 0 56px;border-top:1px solid var(--line);position:relative}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:32px}.num{font-size:10px;letter-spacing:.15em;color:var(--muted);margin-bottom:8px}.title{font-size:34px;line-height:1;letter-spacing:-.04em;margin:0}.subtitle{color:var(--muted);font-size:14px;margin-top:8px}.info{width:25px;height:25px;border:1px solid rgba(255,255,255,.18);border-radius:50%;background:transparent;font-weight:650;cursor:pointer;color:#ddd}.grid{display:grid;grid-template-columns:420px 1fr;gap:55px;align-items:center}.donut-wrap{display:flex;justify-content:center;align-items:center;min-height:340px}.donut{width:300px;height:300px}.bars{display:grid;gap:16px}.bar-row{display:grid;grid-template-columns:150px 1fr 60px;gap:12px;align-items:center;font-size:12px}.bar-bg{height:8px;background:#181818;border-radius:999px;overflow:hidden}.bar-fill{height:100%;width:0;border-radius:999px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}.bar-num{text-align:right;color:var(--muted)}.rank{display:grid;gap:7px}.rank-row{display:grid;grid-template-columns:45px 1fr 90px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)}.rank-row .r{color:var(--muted);font-size:11px}.rank-row .name{font-size:15px}.rank-row .score{text-align:right;font-variant-numeric:tabular-nums}.evo-axis{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:18px;min-height:190px;padding:6px 0 14px;margin-bottom:14px}.evo-axis:before{content:"";position:absolute;left:18px;right:18px;top:72px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.22),rgba(255,255,255,.06))}.evo-point{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:110px;z-index:1}.evo-point:after{content:"";position:absolute;top:68px;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(0,184,111,.09)}.evo-point:before{content:"";position:absolute;top:78px;width:1px;height:22px;background:rgba(255,255,255,.16)}.evo-year{font-size:14px;color:#f0eee8;letter-spacing:.03em;font-variant-numeric:tabular-nums;font-weight:650}.evo-names{font-size:10px;line-height:1.4;color:var(--muted);text-align:center;max-width:125px;min-height:70px;padding-top:62px}.evo-names span{display:block}.evo-axis-wrap{overflow-x:auto;padding-bottom:4px}.evo-axis-wrap::-webkit-scrollbar{height:4px}.evo-axis-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}.timeline{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:14px;align-items:end;min-height:300px;padding:16px 0 6px}.timeline:before{content:"";position:absolute;left:0;right:0;bottom:42px;height:1px;background:rgba(255,255,255,.12)}.tl-col{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px}.tl-bar{width:min(52px,70%);height:0;background:var(--green);border-radius:6px 6px 2px 2px;transition:height 1s cubic-bezier(.2,.8,.2,1)}.tl-count{font-size:12px}.tl-label{font-size:11px;color:var(--muted);text-align:center;min-height:28px;display:flex;align-items:flex-start;justify-content:center}.tl-year{font-size:12px;color:#ddd;letter-spacing:.03em}.tl-note{font-size:10px;color:var(--muted)}.heatmap{overflow:auto}.heat{display:grid;gap:3px;min-width:560px}.heat-cell{min-height:45px;display:flex;align-items:center;justify-content:center;font-size:11px;border-radius:3px;background:#111;border:1px solid rgba(255,255,255,.03)}.heat-label{font-size:10px;color:var(--muted);display:flex;align-items:center;justify-content:center;padding:5px;text-align:center}.bridge{display:grid;grid-template-columns:1.3fr .7fr;gap:70px;align-items:start}.bridge h2{font-size:48px;line-height:1;letter-spacing:-.04em;margin:0}.bridge p{color:#aaa;max-width:640px;line-height:1.55;font-size:16px}.metrics{display:grid;gap:18px}.metric{padding:18px 0;border-top:1px solid var(--line)}.metric .lab{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}.metric .val{font-size:36px;letter-spacing:-.04em;margin-top:5px}.modal{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:22px;z-index:20}.modal.open{display:flex}.modal-card{max-width:600px;width:100%;background:#0e0e0e;border:1px solid rgba(255,255,255,.12);padding:30px}.modal-card h3{margin:0 0 12px;font-size:22px}.modal-card p{color:#b9b6ae;line-height:1.55;font-size:14px}.modal-close{margin-top:16px;border:1px solid rgba(255,255,255,.12);background:transparent;padding:9px 14px;border-radius:8px;cursor:pointer}.donut-center{font-size:36px;font-weight:650;text-anchor:middle}.donut-sub{font-size:10px;fill:var(--muted);letter-spacing:.12em;text-anchor:middle;text-transform:uppercase}.no-data{color:var(--muted);padding:20px 0}.worlds-wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:45px;align-items:center}.venn{position:relative;min-height:430px;overflow:hidden;border:1px solid rgba(255,255,255,.05);background:#090909}.venn-circle{position:absolute;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;font-size:12px;letter-spacing:.01em;transition:transform 1s cubic-bezier(.2,.8,.2,1),opacity 1s ease}.venn-circle span{max-width:120px}.world-summary{display:grid;gap:16px}.world-card{padding:18px 0;border-top:1px solid var(--line)}.world-card:first-child{border-top:0}.world-card .lab{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}.world-card .name{font-size:18px;margin-top:5px}.world-card .detail{font-size:13px;color:#aaa;margin-top:4px;line-height:1.45}.pill{display:inline-block;margin-top:7px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#cfcfcf}.world-foot{margin-top:18px;color:var(--muted);font-size:11px;line-height:1.45}.network-explainer{margin-top:38px;padding-top:30px;border-top:1px solid var(--line)}.network-visual{position:relative;min-height:310px;display:flex;align-items:center;justify-content:center;overflow:hidden}.network-stage{position:relative;width:min(620px,100%);height:280px}.network-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;letter-spacing:.02em}.network-node.samu{width:92px;height:92px;left:8%;top:50%;transform:translateY(-50%);background:var(--ink);color:var(--bg);font-weight:800;letter-spacing:.08em}.network-node.person{width:74px;height:74px;left:39%;top:50%;transform:translateY(-50%);border:1.5px solid rgba(255,255,255,.35);background:#111;color:#f4f2eb}.network-link{position:absolute;height:1px;background:rgba(255,255,255,.22);transform-origin:left center;top:50%}.network-link.a{left:20%;width:19%}.network-link.b{left:48.5%;width:18%;background:linear-gradient(90deg,rgba(255,255,255,.22),rgba(255,255,255,.08))}.fan{position:absolute;left:67%;top:50%;width:150px;height:150px;transform:translateY(-50%)}.fan-node{position:absolute;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:#0d0d0d}.fan-node:nth-child(1){left:10px;top:61px}.fan-node:nth-child(2){left:30px;top:22px}.fan-node:nth-child(3){left:76px;top:4px}.fan-node:nth-child(4){left:120px;top:20px}.fan-node:nth-child(5){left:132px;top:62px}.fan-node:nth-child(6){left:116px;top:106px}.fan-node:nth-child(7){left:72px;top:122px}.fan-node:nth-child(8){left:28px;top:106px}.fan-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;text-align:center;font-size:10px;color:#aaa;line-height:1.35}.network-caption{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-top:14px}.network-caption p{margin:0;color:#aaa;font-size:14px;line-height:1.55}.density-note{color:var(--muted)!important;font-size:11px!important;max-width:none!important;margin:0!important;line-height:1.55!important}@media(max-width:700px){.network-visual{min-height:340px}.network-stage{height:320px;transform:scale(.82);transform-origin:center}.network-caption{grid-template-columns:1fr;gap:12px}.network-caption p{max-width:none}}@media(max-width:900px){.worlds-wrap{grid-template-columns:1fr}.venn{min-height:380px}}
+:root{--bg:#070707;--ink:#f4f2eb;--muted:#8b8983;--green:#00b86f;--line:rgba(255,255,255,.1);--card:#101010}*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Helvetica,Arial,sans-serif}body{min-height:100vh}.wrap{max-width:1280px;margin:0 auto;padding:28px 30px 80px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:80px}.brand{display:flex;align-items:center;gap:7px}.brand img{display:block;height:60px;width:auto;object-fit:contain}.hero-logo{display:block;height:195px;width:auto;max-width:100%;object-fit:contain;margin:0 0 28px auto}.hero-copy{display:flex;flex-direction:column;align-items:flex-start}.kicker{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}.back{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#c8c5be}.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:end;margin-bottom:90px}.hero h1{font-size:clamp(52px,8vw,108px);line-height:.9;letter-spacing:-.06em;margin:0;font-weight:650}.hero p{font-size:18px;line-height:1.45;color:#b7b3aa;max-width:470px;margin:0 0 8px}.section{padding:42px 0 56px;border-top:1px solid var(--line);position:relative}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:32px}.num{font-size:10px;letter-spacing:.15em;color:var(--muted);margin-bottom:8px}.title{font-size:34px;line-height:1;letter-spacing:-.04em;margin:0}.subtitle{color:var(--muted);font-size:14px;margin-top:8px}.info{width:25px;height:25px;border:1px solid rgba(255,255,255,.18);border-radius:50%;background:transparent;font-weight:650;cursor:pointer;color:#ddd}.grid{display:grid;grid-template-columns:420px 1fr;gap:55px;align-items:center}.donut-wrap{display:flex;justify-content:center;align-items:center;min-height:340px}.donut{width:300px;height:300px}.bars{display:grid;gap:16px}.bar-row{display:grid;grid-template-columns:150px 1fr 60px;gap:12px;align-items:center;font-size:12px}.bar-bg{height:8px;background:#181818;border-radius:999px;overflow:hidden}.bar-fill{height:100%;width:0;border-radius:999px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}.bar-num{text-align:right;color:var(--muted)}.rank{display:grid;gap:7px}.rank-row{display:grid;grid-template-columns:45px 1fr 90px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)}.rank-row .r{color:var(--muted);font-size:11px}.rank-row .name{font-size:15px}.rank-row .score{text-align:right;font-variant-numeric:tabular-nums}.evo-axis{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:18px;min-height:190px;padding:6px 0 14px;margin-bottom:14px}.evo-axis:before{content:"";position:absolute;left:18px;right:18px;top:72px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.22),rgba(255,255,255,.06))}.evo-point{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:110px;z-index:1}.evo-point:after{content:"";position:absolute;top:68px;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(0,184,111,.09)}.evo-point:before{content:"";position:absolute;top:78px;width:1px;height:22px;background:rgba(255,255,255,.16)}.evo-year{font-size:14px;color:#f0eee8;letter-spacing:.03em;font-variant-numeric:tabular-nums;font-weight:650}.evo-names{font-size:10px;line-height:1.4;color:var(--muted);text-align:center;max-width:125px;min-height:70px;padding-top:62px}.evo-names span{display:block}.evo-axis-wrap{overflow-x:auto;padding-bottom:4px}.evo-axis-wrap::-webkit-scrollbar{height:4px}.evo-axis-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:999px}.timeline{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:14px;align-items:end;min-height:300px;padding:16px 0 6px}.timeline:before{content:"";position:absolute;left:0;right:0;bottom:42px;height:1px;background:rgba(255,255,255,.12)}.tl-col{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px}.tl-bar{width:min(52px,70%);height:0;background:var(--green);border-radius:6px 6px 2px 2px;transition:height 1s cubic-bezier(.2,.8,.2,1)}.tl-count{font-size:12px}.tl-label{font-size:11px;color:var(--muted);text-align:center;min-height:28px;display:flex;align-items:flex-start;justify-content:center}.tl-year{font-size:12px;color:#ddd;letter-spacing:.03em}.tl-note{font-size:10px;color:var(--muted)}.heatmap{overflow:auto}.heat{display:grid;gap:3px;min-width:560px}.heat-cell{min-height:45px;display:flex;align-items:center;justify-content:center;font-size:11px;border-radius:3px;background:#111;border:1px solid rgba(255,255,255,.03)}.heat-label{font-size:10px;color:var(--muted);display:flex;align-items:center;justify-content:center;padding:5px;text-align:center}.bridge{display:grid;grid-template-columns:1.3fr .7fr;gap:70px;align-items:start}.bridge h2{font-size:48px;line-height:1;letter-spacing:-.04em;margin:0}.bridge p{color:#aaa;max-width:640px;line-height:1.55;font-size:16px}.metrics{display:grid;gap:18px}.metric{padding:18px 0;border-top:1px solid var(--line)}.metric .lab{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}.metric .val{font-size:36px;letter-spacing:-.04em;margin-top:5px}.modal{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:22px;z-index:20}.modal.open{display:flex}.modal-card{max-width:600px;width:100%;background:#0e0e0e;border:1px solid rgba(255,255,255,.12);padding:30px}.modal-card h3{margin:0 0 12px;font-size:22px}.modal-card p{color:#b9b6ae;line-height:1.55;font-size:14px}.modal-close{margin-top:16px;border:1px solid rgba(255,255,255,.12);background:transparent;padding:9px 14px;border-radius:8px;cursor:pointer}.donut-center{font-size:36px;font-weight:650;text-anchor:middle}.donut-sub{font-size:10px;fill:var(--muted);letter-spacing:.12em;text-anchor:middle;text-transform:uppercase}.no-data{color:var(--muted);padding:20px 0}.worlds-wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:45px;align-items:center}.venn{position:relative;min-height:430px;overflow:hidden;border:1px solid rgba(255,255,255,.05);background:#090909}.venn-circle{position:absolute;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;font-size:12px;letter-spacing:.01em;transition:transform 1s cubic-bezier(.2,.8,.2,1),opacity 1s ease}.venn-circle span{max-width:120px}.world-summary{display:grid;gap:16px}.world-card{padding:18px 0;border-top:1px solid var(--line)}.world-card:first-child{border-top:0}.world-card .lab{font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}.world-card .name{font-size:18px;margin-top:5px}.world-card .detail{font-size:13px;color:#aaa;margin-top:4px;line-height:1.45}.pill{display:inline-block;margin-top:7px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#cfcfcf}.world-foot{margin-top:18px;color:var(--muted);font-size:11px;line-height:1.45}.network-explainer{margin-top:38px;padding-top:30px;border-top:1px solid var(--line)}.network-visual{position:relative;min-height:310px;display:flex;align-items:center;justify-content:center;overflow:hidden}.network-stage{position:relative;width:min(620px,100%);height:280px}.network-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;letter-spacing:.02em}.network-node.samu{width:92px;height:92px;left:8%;top:50%;transform:translateY(-50%);background:var(--ink);color:var(--bg);font-weight:800;letter-spacing:.08em}.network-node.person{width:74px;height:74px;left:39%;top:50%;transform:translateY(-50%);border:1.5px solid rgba(255,255,255,.35);background:#111;color:#f4f2eb}.network-link{position:absolute;height:1px;background:rgba(255,255,255,.22);transform-origin:left center;top:50%}.network-link.a{left:20%;width:19%}.network-link.b{left:48.5%;width:18%;background:linear-gradient(90deg,rgba(255,255,255,.22),rgba(255,255,255,.08))}.fan{position:absolute;left:67%;top:50%;width:150px;height:150px;transform:translateY(-50%)}.fan-node{position:absolute;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:#0d0d0d}.fan-node:nth-child(1){left:10px;top:61px}.fan-node:nth-child(2){left:30px;top:22px}.fan-node:nth-child(3){left:76px;top:4px}.fan-node:nth-child(4){left:120px;top:20px}.fan-node:nth-child(5){left:132px;top:62px}.fan-node:nth-child(6){left:116px;top:106px}.fan-node:nth-child(7){left:72px;top:122px}.fan-node:nth-child(8){left:28px;top:106px}.fan-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;text-align:center;font-size:10px;color:#aaa;line-height:1.35}.network-caption{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-top:14px}.network-caption p{margin:0;color:#aaa;font-size:14px;line-height:1.55}.density-note{color:var(--muted)!important;font-size:11px!important;max-width:none!important;margin:0!important;line-height:1.55!important}@media(max-width:700px){.network-visual{min-height:340px}.network-stage{height:320px;transform:scale(.82);transform-origin:center}.network-caption{grid-template-columns:1fr;gap:12px}.network-caption p{max-width:none}}.network-explainer{margin-top:38px;padding-top:30px;border-top:1px solid var(--line)}.network-visual{position:relative;min-height:310px;display:flex;align-items:center;justify-content:center;overflow:hidden}.network-stage{position:relative;width:min(620px,100%);height:280px}.network-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;letter-spacing:.02em}.network-node.samu{width:92px;height:92px;left:8%;top:50%;transform:translateY(-50%);background:var(--ink);color:var(--bg);font-weight:800;letter-spacing:.08em}.network-node.person{width:74px;height:74px;left:39%;top:50%;transform:translateY(-50%);border:1.5px solid rgba(255,255,255,.35);background:#111;color:#f4f2eb}.network-link{position:absolute;height:1px;background:rgba(255,255,255,.22);transform-origin:left center;top:50%}.network-link.a{left:20%;width:19%}.network-link.b{left:48.5%;width:18%;background:linear-gradient(90deg,rgba(255,255,255,.22),rgba(255,255,255,.08))}.fan{position:absolute;left:67%;top:50%;width:150px;height:150px;transform:translateY(-50%)}.fan-node{position:absolute;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:#0d0d0d}.fan-node:nth-child(1){left:10px;top:61px}.fan-node:nth-child(2){left:30px;top:22px}.fan-node:nth-child(3){left:76px;top:4px}.fan-node:nth-child(4){left:120px;top:20px}.fan-node:nth-child(5){left:132px;top:62px}.fan-node:nth-child(6){left:116px;top:106px}.fan-node:nth-child(7){left:72px;top:122px}.fan-node:nth-child(8){left:28px;top:106px}.fan-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;text-align:center;font-size:10px;color:#aaa;line-height:1.35}.network-caption{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-top:14px}.network-caption p{margin:0;color:#aaa;font-size:14px;line-height:1.55}.density-note{color:var(--muted)!important;font-size:11px!important;max-width:none!important;margin:0!important;line-height:1.55!important}@media(max-width:700px){.network-visual{min-height:340px}.network-stage{height:320px;transform:scale(.82);transform-origin:center}.network-caption{grid-template-columns:1fr;gap:12px}.network-caption p{max-width:none}}@media(max-width:900px){.worlds-wrap{grid-template-columns:1fr}.venn{min-height:380px}}
 @media(max-width:900px){.hero,.grid,.bridge{grid-template-columns:1fr;gap:34px}.hero-logo{height:143px;margin:0 0 22px 0}.hero{margin-bottom:65px}.grid{gap:25px}.bridge h2{font-size:38px}.top{margin-bottom:55px}.wrap{padding:22px 18px 60px}}
 </style>
 </head><body>
@@ -225,226 +225,168 @@ function worldOverlap(){
 
 function bridge(){
 
-  const m =
-    countConns();
+  const m=countConns();
 
-  const max =
+  const max=
     data.people.reduce(
-      (best,p) => {
-
-        const n =
-          m.get(
-            String(p.ID)
-          ) || 0;
-
-        return n >
-          (best?.n ?? -1)
-          ? {p,n}
-          : best;
-
+      (best,p)=>{
+        const n=m.get(String(p.ID))||0;
+        return n>(best?.n??-1)?{p,n}:best;
       },
       null
     );
 
-  const connected =
+  const connected=
     [...m.values()]
-      .filter(
-        n => n > 0
-      ).length;
+      .filter(n=>n>0)
+      .length;
 
-  const connectedPct =
+  const connectedPct=
     data.people.length
-      ? (
-          connected /
-          data.people.length *
-          100
-        )
+      ? connected/data.people.length*100
       : 0;
 
-  const totalConnections =
+  const totalConnections=
     uniqueConnections().size;
 
-  const possibleConnections =
-    data.people.length > 1
-      ? (
-          data.people.length *
-          (
-            data.people.length - 1
-          ) /
-          2
-        )
+  const possibleConnections=
+    data.people.length>1
+      ? data.people.length*(data.people.length-1)/2
       : 0;
 
-  const density =
+  const density=
     possibleConnections
-      ? (
-          totalConnections /
-          possibleConnections
-        ) *
-        100
+      ? totalConnections/possibleConnections*100
       : 0;
 
-  const avgPerConnected =
+  /*
+    Aquesta mitjana expressa quantes persones addicionals
+    apareixen connectades, de mitjana, a cada persona
+    que forma part de la xarxa.
+  */
+
+  const avgPerConnected=
     connected
-      ? (
-          totalConnections * 2 /
-          connected
-        )
+      ? totalConnections*2/connected
       : 0;
 
-  const exact =
-    Math.floor(
-      avgPerConnected
-    );
+  const exact=Math.floor(avgPerConnected);
+  const partial=(avgPerConnected-exact)>0.01;
 
-  const partial =
-    (
-      avgPerConnected -
-      exact
-    ) > 0.01;
+  let fanNodes='';
 
-  let fanNodes = '';
-
-  for(
-    let i=0;
-    i<exact;
-    i++
-  ){
-
-    fanNodes +=
-      '<div class="fan-node"></div>';
-
+  for(let i=0;i<exact;i++){
+    fanNodes+='<div class="fan-node"></div>';
   }
 
   if(partial){
-
-    fanNodes +=
-      '<div class="fan-node" style="opacity:'+
-      Math.max(
-        .25,
-        avgPerConnected - exact
-      ).toFixed(2)+
-      '"></div>';
-
+    fanNodes+='<div class="fan-node" style="opacity:'+Math.max(.25,avgPerConnected-exact).toFixed(2)+'"></div>';
   }
 
-  return (
+  return '<div class="bridge">'+
 
-    '<div class="bridge">'+
+    '<div>'+
 
-      '<div>'+
+      '<h2>'+
+        'Conèixer-te no és només conèixer-te a tu: és entrar en una xarxa de persones que, d’una manera o altra, acaba fent-se més gran.'+
+      '</h2>'+
 
-        '<h2>'+
-          'Cada persona que has conegut pot obrir-te un món nou.'+
-        '</h2>'+
+      '<p>'+
+        '“Quan algú et coneix, no només entra en la teva vida: entra en una xarxa de persones, grups i històries que potser mai no hauria arribat a descobrir sense tu.”'+
+      '</p>'+
 
-        '<p>'+
-          '“Cada persona que has conegut no és només una amistat: és una porta a altres persones, altres grups i altres històries.”'+
-        '</p>'+
+      '<div class="network-explainer">'+
 
-        '<div class="network-explainer">'+
+        '<div class="network-visual">'+
 
-          '<div class="network-visual">'+
+          '<div class="network-stage">'+
 
-            '<div class="network-stage">'+
+            '<div class="network-node samu">'+
+              'SAMU'+
+            '</div>'+
 
-              '<div class="network-node samu">'+
-                'SAMU'+
+            '<div class="network-link a"></div>'+
+
+            '<div class="network-node person">'+
+              'PERSONA<br>QUE ET CONEIX'+
+            '</div>'+
+
+            '<div class="network-link b"></div>'+
+
+            '<div class="fan">'+
+              fanNodes+
+              '<div class="fan-label">'+
+                avgPerConnected.toFixed(1)+
+                ' persones<br>de mitjana'+
               '</div>'+
-
-              '<div class="network-link a"></div>'+
-
-              '<div class="network-node person">'+
-                'PERSONA<br>QUE CONEIX SAMU'+
-              '</div>'+
-
-              '<div class="network-link b"></div>'+
-
-              '<div class="fan">'+
-
-                fanNodes+
-
-                '<div class="fan-label">'+
-                  avgPerConnected.toFixed(1)+
-                  ' persones<br>de mitjana'+
-                '</div>'+
-
-              '</div>'+
-
             '</div>'+
 
           '</div>'+
 
-          '<div class="network-caption">'+
-
-            '<p>'+
-              'Cada persona que coneix Samu forma part de la seva xarxa i, alhora, està connectada amb altres persones dins d’aquesta mateixa xarxa. De mitjana, cada persona que coneix Samu està relacionada amb <strong>'+
-              avgPerConnected.toFixed(1)+
-              '</strong> persones més. El dibuix mostra aquesta expansió: <strong>Samu → una persona que coneix Samu → el seu cercle de connexions.</strong>'+
-            '</p>'+
-
-            '<p class="density-note">'+
-              'La <strong>densitat real</strong> de la malla és del <strong>'+
-              density.toFixed(2)+
-              '%</strong>. Aquesta xifra no indica quantes persones estan connectades, sinó com d’interconnectades estan les persones que coneix Samu. Entre les '+
-              data.people.length+
-              ' persones hi ha '+
-              possibleConnections+
-              ' parelles possibles; de totes aquestes, '+
-              totalConnections+
-              ' tenen una connexió registrada. Per això la densitat és del '+
-              density.toFixed(2)+
-              '%. Com més alta és, més de les relacions possibles entre aquesta gent existeixen realment.'+
-            '</p>'+
-
-          '</div>'+
-
         '</div>'+
 
-      '</div>'+
+        '<div class="network-caption">'+
 
-      '<div class="metrics">'+
+          '<p>'+
+            'Quan algú et coneix, sovint acaba coneixent també altres persones que formen part de la teva xarxa. En les dades que has construït, cada persona que et coneix està vinculada, de mitjana, amb <strong>'+
+            avgPerConnected.toFixed(1)+
+            '</strong> persones més. És aquesta capacitat de posar en contacte mons diferents la que fa que una sola connexió pugui acabar generant-ne moltes més. El dibuix representa aquesta idea: <strong>tu → una persona que et coneix → altres persones que acaba coneixent gràcies a aquesta connexió.</strong>'+
+          '</p>'+
 
-        '<div class="metric">'+
-          '<div class="lab">Persones</div>'+
-          '<div class="val">'+
+          '<p class="density-note">'+
+
+            'La <strong>densitat real</strong> de la malla és del <strong>'+
+            density.toFixed(2)+
+            '%</strong>. Aquesta xifra ens diu fins a quin punt totes aquestes persones estan connectades entre elles. De les '+
+            possibleConnections+
+            ' parelles que podrien existir entre les '+
             data.people.length+
-          '</div>'+
-        '</div>'+
-
-        '<div class="metric">'+
-          '<div class="lab">Connexions</div>'+
-          '<div class="val">'+
+            ' persones de la xarxa, n’hi ha '+
             totalConnections+
-          '</div>'+
-        '</div>'+
+            ' que tenen una connexió registrada. Dit d’una altra manera, existeix aproximadament 1 de cada '+
+            (density ? Math.round(100/density) : 0)+
+            ' connexions possibles. La densitat no mesura quanta gent coneixes, sinó fins a quin punt les persones que has anat connectant també acaben connectant-se entre elles.'+
 
-        '<div class="metric">'+
-          '<div class="lab">Persones connectades</div>'+
-          '<div class="val">'+
-            connected+
-            ' · '+
-            connectedPct.toFixed(0)+
-            '%'+
-          '</div>'+
-        '</div>'+
+          '</p>'+
 
-        '<div class="metric">'+
-          '<div class="lab">Més connexions directes</div>'+
-          '<div class="val">'+
-            (
-              max
-                ? esc(label(max.p['Nombre']))
-                : 'No consta'
-            )+
-          '</div>'+
         '</div>'+
 
       '</div>'+
 
-    '</div>'
+    '</div>'+
 
-  );
+    '<div class="metrics">'+
+
+      '<div class="metric">'+
+        '<div class="lab">Persones</div>'+
+        '<div class="val">'+data.people.length+'</div>'+
+      '</div>'+
+
+      '<div class="metric">'+
+        '<div class="lab">Connexions</div>'+
+        '<div class="val">'+totalConnections+'</div>'+
+      '</div>'+
+
+      '<div class="metric">'+
+        '<div class="lab">Persones connectades</div>'+
+        '<div class="val">'+
+          connected+
+          ' · '+
+          connectedPct.toFixed(0)+
+          '%'+
+        '</div>'+
+      '</div>'+
+
+      '<div class="metric">'+
+        '<div class="lab">Més connexions directes</div>'+
+        '<div class="val">'+
+          (max?esc(label(max.p['Nombre'])):'No consta')+
+        '</div>'+
+      '</div>'+
+
+    '</div>'+
+
+  '</div>';
 
 }
 
@@ -463,7 +405,7 @@ function render(){
   const content=document.getElementById('content');
 
   content.innerHTML=
-    makeSection('01','EL PONT','Cada persona que has conegut pot obrir-te un món nou.',bridge(),'pont',helpText('pont'))+
+    makeSection('01','EL NEXE','Quan algú et coneix, la teva xarxa també s’expandeix.',bridge(),'pont',helpText('pont'))+
     makeSection('02','L’EVOLUCIÓ','Com ha crescut la teva xarxa?',timeline(),'evolucio',helpText('evolucio'))+
     makeSection('03','EL TEU UNIVERS','D’on ve la teva gent?','<div class="grid">'+donut()+bars()+'</div>','univers',helpText('univers'))+
     makeSection('04','MONS QUE ES BARREGEN','Quins cercles es creuen?',worldOverlap(),'mons',helpText('mons'))+
