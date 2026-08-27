@@ -355,7 +355,7 @@ function bridge(){
               '<div class="network-link a"></div>'+
 
               '<div class="network-node person">'+
-                'UNA<br>PERSONA'+
+                'PERSONA<br>QUE CONEIX SAMU'+
               '</div>'+
 
               '<div class="network-link b"></div>'+
@@ -378,27 +378,23 @@ function bridge(){
           '<div class="network-caption">'+
 
             '<p>'+
-              'Una persona que coneixes pot actuar com un pont cap a altres persones. En aquesta xarxa, cada persona connectada té, de mitjana, <strong>'+
+              'Cada persona que coneix Samu forma part de la seva xarxa i, alhora, està connectada amb altres persones dins d’aquesta mateixa xarxa. De mitjana, cada persona que coneix Samu està relacionada amb <strong>'+
               avgPerConnected.toFixed(1)+
-              '</strong> connexions directes. El dibuix representa aquesta idea: <strong>Samu → una persona → els altres contactes que apareixen a la malla.</strong>'+
+              '</strong> persones més. El dibuix mostra aquesta expansió: <strong>Samu → una persona que coneix Samu → el seu cercle de connexions.</strong>'+
             '</p>'+
 
             '<p class="density-note">'+
               'La <strong>densitat real</strong> de la malla és del <strong>'+
               density.toFixed(2)+
-              '%</strong>. Això compara les '+
-              totalConnections+
-              ' connexions que existeixen amb totes les connexions que podrien existir entre les '+
+              '%</strong>. Aquesta xifra no indica quantes persones estan connectades, sinó com d’interconnectades estan les persones que coneix Samu. Entre les '+
               data.people.length+
-              ' persones. Amb '+
-              data.people.length+
-              ' persones hi ha un màxim de '+
+              ' persones hi ha '+
               possibleConnections+
-              ' parelles possibles; ara mateix n’hi ha '+
+              ' parelles possibles; de totes aquestes, '+
               totalConnections+
-              '. Per tant, només el '+
+              ' tenen una connexió registrada. Per això la densitat és del '+
               density.toFixed(2)+
-              '% de totes les relacions possibles apareixen realment a la xarxa. És una manera de mesurar com de plena o compacta és la malla.'+
+              '%. Com més alta és, més de les relacions possibles entre aquesta gent existeixen realment.'+
             '</p>'+
 
           '</div>'+
